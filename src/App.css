@@ -1,0 +1,43 @@
+.app-root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  display: flex;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--bd);
+  height: 49px;
+  flex-shrink: 0;
+}
+
+.tab {
+  padding: 14px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  color: var(--tx2);
+  transition: all 0.2s;
+  user-select: none;
+  text-decoration: none;  /* NavLink renders an <a> by default */
+  display: flex;
+  align-items: center;
+}
+
+.tab:hover {
+  color: var(--tx);
+  background: var(--bg3);
+}
+
+.tab-active {
+  color: var(--ac);
+  border-bottom-color: var(--ac);
+  background: var(--bg);
+}
+
+.tab-icon {
+  margin-right: 6px;
+  font-size: 16px;
+}

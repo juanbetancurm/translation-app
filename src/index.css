@@ -1,0 +1,93 @@
+/*
+ *
+ * Design tokens and base styles for the Translation Lab.
+ *
+ * These tokens are the visual single source of truth for the app.
+ * Components reference them as var(--name); they should never hardcode hex
+ * colors. If a new color is needed, add it here first.
+ *
+ * The token names follow the convention used in the original Translation
+ * Lab prototype, kept verbatim so the original CSS can be copied over with
+ * minimal rewriting:
+ *   --bg, --bg2, --bg3, --bg4   = surfaces, dark-to-darkest
+ *   --tx, --tx2, --tx3          = text, primary-to-faintest
+ *   --ac, --ac2                 = accent (blue)
+ *   --gr, --gr2                 = green
+ *   --am, --am2                 = amber
+ *   --co, --co2                 = coral (red)
+ *   --pu                        = purple (P-site)
+ *   --te                        = teal
+ *   --pi                        = pink
+ *   --bd                        = border
+ *   --mono, --sans              = font families
+ */
+
+:root {
+  /* Surfaces */
+  --bg:  #090b10;
+  --bg2: #11141c;
+  --bg3: #191d2a;
+  --bg4: #222838;
+
+  /* Text */
+  --tx:  #e4e8f1;
+  --tx2: #8d99b4;
+  --tx3: #586580;
+
+  /* Accent — blue (used for active codon, primary buttons) */
+  --ac:  #3db9f5;
+  --ac2: #6d8cff;
+
+  /* Green (used for A bases, normal protein, success states) */
+  --gr:  #2dd4a8;
+  --gr2: #0d9668;
+
+  /* Amber (used for G bases, A-site tRNA, moderate impact) */
+  --am:  #f5b731;
+  --am2: #c48a12;
+
+  /* Coral (used for U bases, mutated state, high impact) */
+  --co:  #f56b81;
+  --co2: #d42f50;
+
+  /* Purple (used for P-site tRNA, "Pro" amino acid badge accent) */
+  --pu:  #a07bf5;
+
+  /* Teal (used for Lys amino acid color) */
+  --te:  #25cdb7;
+
+  /* Pink (used for Arg amino acid color) */
+  --pi:  #e879a8;
+
+  /* Borders */
+  --bd: #252d3f;
+
+  /* Fonts */
+  --mono: "JetBrains Mono", monospace;
+  --sans: "Space Grotesk", system-ui, sans-serif;
+}
+
+/* Reset — minimal, deliberate. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--tx);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Hidden helper — applied by toggling instead of unmounting when we want
+ * to preserve component state. We use display:none here for full removal
+ * from layout flow.
+ */
+.hidden {
+  display: none !important;
+}
