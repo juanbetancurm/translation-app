@@ -1,0 +1,81 @@
+
+.controls {
+  padding: 12px 16px;
+  background: var(--bg);
+  border-top: 1px solid var(--bd);
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: auto;
+}
+
+.btn {
+  padding: 9px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Primary button (Next Step) — solid accent color */
+.btn-1 {
+  background: var(--ac);
+  color: var(--bg);
+}
+
+.btn-1:hover:not(:disabled) {
+  background: #6dd0f7;
+}
+
+/* Secondary button (Reset) — outlined, subtle */
+.btn-2 {
+  background: var(--bg3);
+  color: var(--tx2);
+  border: 1px solid var(--bd);
+}
+
+.btn-2:hover {
+  background: var(--bg4);
+  color: var(--tx);
+}
+
+/* Toggle button (Auto/Pause) — green when off, red when on */
+.btn-3 {
+  background: var(--gr2);
+  color: #fff;
+}
+
+.btn-3.btn-on {
+  background: var(--co2);
+}
+
+.btn-3:hover {
+  opacity: 0.9;
+}
+
+/* Speed slider container */
+.speed {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--tx3);
+}
+
+.speed input {
+  width: 70px;
+  accent-color: var(--ac);
+}

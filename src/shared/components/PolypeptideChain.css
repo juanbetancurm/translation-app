@@ -1,0 +1,60 @@
+/* 
+ *
+ * Styles for the polypeptide chain. The .aa class is for normal beads;
+ * .aa-wrong adds a dashed border for amino acids that differ from the
+ * reference protein (used in the Mutation Simulator).
+ */
+
+.pep-area {
+  width: 100%;
+  max-width: 680px;
+  flex-shrink: 0;
+  margin-top: 10px;
+}
+
+.pep-lbl {
+  font-size: 11px;
+  color: var(--tx3);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.pep {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-items: center;
+  min-height: 28px;
+}
+
+.aa {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--mono);
+  animation: pop 0.35s cubic-bezier(0.2, 0.8, 0.4, 1.2) both;
+  border: 1px solid transparent;
+}
+
+.aa-wrong {
+  border-style: dashed;
+  opacity: 0.85;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pep-bond {
+  color: var(--tx3);
+  font-size: 9px;
+  margin: 0 -1px;
+}

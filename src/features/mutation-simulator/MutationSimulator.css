@@ -1,0 +1,59 @@
+
+.mutation {
+  display: flex;
+  height: calc(100vh - 49px);
+}
+
+.mutation-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.mutation-side {
+  width: 360px;
+  min-width: 320px;
+  background: var(--bg2);
+  border-left: 1px solid var(--bd);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.mut-panel {
+  padding: 16px 20px;
+}
+
+.mut-panel h3 {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--co);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.mut-instructions {
+  font-size: 12px;
+  color: var(--tx2);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+  .mutation {
+    flex-direction: column;
+  }
+  .mutation-side {
+    width: 100%;
+    min-width: unset;
+    border-left: none;
+    border-top: 1px solid var(--bd);
+    max-height: 45vh;
+  }
+  .mutation-main {
+    min-height: 55vh;
+  }
+}

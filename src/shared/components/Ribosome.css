@@ -1,0 +1,94 @@
+/*
+ *
+ * The ribosome sprite, positioned absolutely within its parent .ribo-zone.
+ * The `left` value is set inline by the React component. Everything else
+ * is in CSS.
+ */
+
+/* Parent container that hosts the ribosome and the tRNAs. The mRNA strand
+ * sits below it, and getBoundingClientRect math is done relative to it. */
+.ribo-zone {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  height: 210px;
+  flex-shrink: 0;
+}
+
+.ribo {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Smooth horizontal slide when `left` changes (translocation step).
+   * The cubic-bezier gives a satisfying ease-in-out feel. */
+  transition: left 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.5s ease;
+}
+
+.ribo-fading {
+  opacity: 0;
+}
+
+/* 60S large subunit — top */
+.ribo-lg {
+  width: 168px;
+  height: 64px;
+  background: linear-gradient(145deg, #2a3555, #1a2440);
+  border: 1.5px solid #3b4a6b;
+  border-radius: 14px 14px 5px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  position: relative;
+  /* Transition the opacity so when largeVisible toggles, it fades in. */
+  transition: opacity 0.5s ease;
+}
+
+.ribo-lg span {
+  font-size: 10px;
+  color: var(--tx2);
+  font-weight: 600;
+  letter-spacing: 0.6px;
+}
+
+/* 40S small subunit — bottom */
+.ribo-sm {
+  width: 148px;
+  height: 46px;
+  background: linear-gradient(145deg, #1a2440, #131b30);
+  border: 1.5px solid #2d3a52;
+  border-radius: 5px 5px 12px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -1px;
+  z-index: 2;
+}
+
+.ribo-sm span {
+  font-size: 10px;
+  color: var(--tx3);
+  font-weight: 500;
+}
+
+/* E / P / A site labels between the two subunits */
+.sites {
+  display: flex;
+  width: 168px;
+  margin-top: 4px;
+  transition: opacity 0.5s ease;
+}
+
+.sites span {
+  flex: 1;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--mono);
+}
+
+.site-e { color: var(--tx3); }
+.site-p { color: var(--pu); }
+.site-a { color: var(--am); }

@@ -1,0 +1,95 @@
+/*
+ *
+ * Styles for the Codon component. Class names match those from the original
+ * Translation Lab prototype to keep the migration straightforward.
+ *
+ * State classes:
+ *   .cdn-upcoming   pre-translation (dim)
+ *   .cdn-active     ribosome is on or about to be on this codon
+ *   .cdn-done       ribosome has already moved past this codon
+ *   .cdn-mutated    this codon contains a mutation (Mutation Simulator)
+ *   .cdn-stop-hit   the STOP codon has been reached
+ *
+ * Base color classes (.b-A, .b-U, .b-C, .b-G) follow the same color logic
+ * as the design tokens: A=green, U=coral, C=blue, G=amber.
+ */
+
+.cdn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: default;
+}
+
+.cdn-bases {
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1.5px solid var(--bd);
+  transition: all 0.3s;
+}
+
+.cdn-active .cdn-bases {
+  border-color: var(--ac);
+  box-shadow: 0 0 10px rgba(61, 185, 245, 0.19);  /* #3db9f530 */
+}
+
+.cdn-done .cdn-bases {
+  opacity: 0.5;
+}
+
+.cdn-upcoming .cdn-bases {
+  opacity: 0.35;
+}
+
+.cdn-mutated .cdn-bases {
+  border-color: var(--co);
+  box-shadow: 0 0 10px rgba(245, 107, 129, 0.19);  /* #f56b8130 */
+}
+
+.cdn-stop-hit .cdn-bases {
+  border-color: var(--co);
+  box-shadow: 0 0 14px rgba(245, 107, 129, 0.25);  /* #f56b8140 */
+}
+
+/* Individual base squares */
+.b {
+  width: 26px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--bg3);
+  transition: all 0.2s;
+}
+
+.b + .b {
+  border-left: 1px solid var(--bd);
+}
+
+.b-A { color: #2dd4a8; }
+.b-U { color: #f56b81; }
+.b-C { color: #3db9f5; }
+.b-G { color: #f5b731; }
+
+.b-mutated {
+  background: rgba(245, 107, 129, 0.15);  /* #f56b8125 */
+  position: relative;
+}
+
+/* Codon label underneath (amino acid name or "STOP") */
+.cdn-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--tx3);
+  margin-top: 2px;
+  height: 13px;
+  transition: all 0.2s;
+}
+
+.cdn-active .cdn-lbl {
+  color: var(--ac);
+}
