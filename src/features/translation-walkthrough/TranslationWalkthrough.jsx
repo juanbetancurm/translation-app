@@ -10,7 +10,8 @@ import PolypeptideChain from "../../shared/components/PolypeptideChain";
 import Ribosome from "../../shared/components/Ribosome";
 import PhaseBanner from "../../shared/components/PhaseBanner";
 import ControlBar from "../../shared/components/ControlBar";
-import { ORIG_CODONS, GC } from "../../shared/biology";
+import { GC } from "../../shared/biology/geneticCode.js";
+import { ORIG_CODONS } from "../../shared/biology/constants.js";
 import "./TranslationWalkthrough.css";
 
 export default function TranslationWalkthrough() {

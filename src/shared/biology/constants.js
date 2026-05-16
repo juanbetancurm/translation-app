@@ -11,7 +11,7 @@
 // demonstration sequence. ORIG_CODONS and ORIG_PROTEIN are derived from it
 // and recomputed automatically at module load time.
 
-import { splitCodons, translateSeq } from "./translation";
+import { splitCodons, translateSeq } from "./translation.js";
 
 // The 24-base reference mRNA sequence. Encodes Met-Pro-Glu-Phe-Gly-Lys-Pro
 // followed by a UGA STOP codon.

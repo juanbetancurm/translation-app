@@ -16,7 +16,7 @@
 //   label            caption text above the chain
 //                    (default: "Growing polypeptide:")
 
-import { AA_COL } from "../biology";
+import { AA_COL } from "../biology/geneticCode.js";
 import "./PolypeptideChain.css";
 
 export default function PolypeptideChain({

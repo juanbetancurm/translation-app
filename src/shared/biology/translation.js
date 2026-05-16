@@ -8,7 +8,7 @@
 // mutation editor, but should be filtered out *before* calling these
 // functions. They expect clean sequences.
 
-import { GC } from "./geneticCode";
+import { GC } from "./geneticCode.js";
 
 // Split a sequence into an array of three-letter codons.
 // Any trailing partial codon (1 or 2 leftover bases) is discarded,

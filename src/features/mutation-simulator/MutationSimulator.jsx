@@ -8,7 +8,8 @@ import MrnaStrand from "../../shared/components/MrnaStrand";
 import PolypeptideChain from "../../shared/components/PolypeptideChain";
 import Ribosome from "../../shared/components/Ribosome";
 import PhaseBanner from "../../shared/components/PhaseBanner";
-import { ORIG_CODONS, GC } from "../../shared/biology";
+import { GC } from "../../shared/biology/geneticCode.js";
+import { ORIG_CODONS } from "../../shared/biology/constants.js";
 import "./MutationSimulator.css";
 
 export default function MutationSimulator() {

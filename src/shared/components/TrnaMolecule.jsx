@@ -18,7 +18,7 @@
 //   aminoAcid   optional amino acid name; if absent, no badge is drawn
 //   entering    if true, plays the fly-in entrance animation
 
-import { AA_COL } from "../biology";
+import { AA_COL } from "../biology/geneticCode.js";
 import "./TrnaMolecule.css";
 
 const SITE_COLORS = {
