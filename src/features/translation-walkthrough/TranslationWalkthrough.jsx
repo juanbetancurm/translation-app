@@ -1,10 +1,8 @@
 //
 //
 // The Translation Walkthrough feature. Uses useReducer for state,
-// useRef for DOM access, and useEffect for ribosome positioning.
-//
-// Auto-play and the speed slider are still wired to no-op callbacks in
-// this step; they'll be implemented in Step 4.4.
+// useRef for DOM access, useLayoutEffect for ribosome positioning, and
+// useAutoPlay for timed progression.
 //
 // Architecture:
 //   - walkthroughReducer holds all the step state.
@@ -42,6 +40,7 @@ import {
 import {
   TRANSLATION_STEPS,
 } from "./stepDefinitions.js";
+import { useAutoPlay } from "../../shared/hooks/useAutoPlay.js";
 import "./TranslationWalkthrough.css";
 
 const STRAND_ID = "walkthrough-strand";
@@ -56,6 +55,8 @@ export default function TranslationWalkthrough() {
   // reducer is pure (cannot touch the DOM).
   const [riboLeft, setRiboLeft] = useState(0);
   const [codonCenters, setCodonCenters] = useState([]);
+  const [isAutoRunning, setIsAutoRunning] = useState(false);
+  const [speed, setSpeed] = useState(1200);
 
   // ── Refs for DOM measurement ─────────────────────────────────────
   // The container ref points to the .strand-with-ribo wrapper. The codonRefs
@@ -97,6 +98,28 @@ export default function TranslationWalkthrough() {
     return () => window.removeEventListener("resize", updateOverlayPositions);
   }, [codonRefs, state.stepIndex, state.riboCodonIndex, state.riboVisible]);
 
+  const handleAutoTick = () => {
+    const lastStepIndex = TRANSLATION_STEPS.length - 1;
+
+    if (state.stepIndex >= lastStepIndex) {
+      setIsAutoRunning(false);
+      return;
+    }
+
+    dispatch({ type: "NEXT_STEP" });
+
+    if (state.stepIndex + 1 >= lastStepIndex) {
+      setIsAutoRunning(false);
+    }
+  };
+
+  // Auto-play: fire NEXT_STEP every `speed` ms while isAutoRunning is true.
+  useAutoPlay({
+    isRunning: isAutoRunning,
+    speed,
+    onTick: handleAutoTick,
+  });
+
   // ── Derived display data ─────────────────────────────────────────
   // The mRNA codon labels come from the genetic code. Constant per render.
   const codonLabels = ORIG_CODONS.map((c) => GC[c] || "???");
@@ -106,7 +129,26 @@ export default function TranslationWalkthrough() {
 
   // ── Event handlers ───────────────────────────────────────────────
   const handleNext = () => dispatch({ type: "NEXT_STEP" });
-  const handleReset = () => dispatch({ type: "RESET" });
+
+  const handleReset = () => {
+    setIsAutoRunning(false);
+    dispatch({ type: "RESET" });
+  };
+
+  const handleToggleAuto = () => {
+    if (isAutoRunning) {
+      setIsAutoRunning(false);
+      return;
+    }
+
+    if (state.stepIndex >= TRANSLATION_STEPS.length - 1) {
+      dispatch({ type: "RESET" });
+    }
+
+    setIsAutoRunning(true);
+  };
+
+  const handleSpeedChange = (newSpeed) => setSpeed(newSpeed);
 
   // ── Render ───────────────────────────────────────────────────────
   return (
@@ -173,12 +215,12 @@ export default function TranslationWalkthrough() {
         />
         <ControlBar
           onNext={handleNext}
-          onToggleAuto={() => {}}
+          onToggleAuto={handleToggleAuto}
           onReset={handleReset}
-          onSpeedChange={() => {}}
-          isAutoRunning={false}
-          nextDisabled={nextDisabled}
-          speed={1200}
+          onSpeedChange={handleSpeedChange}
+          isAutoRunning={isAutoRunning}
+          nextDisabled={nextDisabled || isAutoRunning}
+          speed={speed}
         />
       </aside>
     </div>
