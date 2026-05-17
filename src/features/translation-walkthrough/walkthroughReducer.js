@@ -166,7 +166,7 @@ function computeStateAtStep(prevState, newIndex) {
           entering: true,
         },
       ];
-      next.codonStates = markUpToActive(ci);
+      next.codonStates = makeStates(ci - 1, [ci - 1, ci]);
       next.lookupCodon = codon;
       break;
     }
@@ -242,13 +242,3 @@ function makeStates(riboPos, activeIndices) {
   });
 }
 
-// Used during elongation arrive/shift: mark codons before the active one
-// as done, the active one and the next as active, rest as upcoming.
-function markUpToActive(ci) {
-  return ORIG_CODONS.map((_, i) => {
-    if (i < ci) return "done";
-    if (i === ci) return "active";
-    if (i === ci + 1) return "active";
-    return "upcoming";
-  });
-}

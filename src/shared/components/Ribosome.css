@@ -8,11 +8,11 @@
 /* Parent container that hosts the ribosome and the tRNAs. The mRNA strand
  * sits below it, and getBoundingClientRect math is done relative to it. */
 .ribo-zone {
+  /* position and dimensions are now controlled by the parent
+   * .strand-with-ribo wrapper. We just inherit. */
   position: relative;
   width: 100%;
-  max-width: 680px;
   height: 210px;
-  flex-shrink: 0;
 }
 
 .ribo {

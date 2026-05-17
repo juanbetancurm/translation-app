@@ -13,6 +13,8 @@
 //   strandId       optional unique HTML id prefix for the codon elements;
 //                  each codon gets id = `${strandId}-c${codonIndex}`. Used
 //                  by the ribosome positioning code in Phase 4.
+//   codonRefs      optional array of refs, one per codon, used by overlay
+//                  components to measure each codon's DOM position
 //   headerLabel    optional override for the middle header label
 //                  (default "mRNA"; the Mutation Simulator uses "Mutated mRNA")
 
@@ -25,6 +27,7 @@ export default function MrnaStrand({
   states,
   mutatedPositions,
   strandId,
+  codonRefs,
   headerLabel = "mRNA",
 }) {
   // For each codon, derive which of its three base positions are mutated.
@@ -56,6 +59,7 @@ export default function MrnaStrand({
             label={labels[i]}
             state={states[i]}
             mutatedBaseIndices={basesMutatedInCodon(i)}
+            forwardedRef={codonRefs?.[i]}
           />
         ))}
       </div>

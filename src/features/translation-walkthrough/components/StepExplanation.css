@@ -1,0 +1,58 @@
+/*
+ *
+ * Styles for the sidebar's step explanation and codon-lookup display.
+ * Class names match the original Translation Lab prototype.
+ */
+
+.sb-text strong {
+  color: var(--tx);
+  font-weight: 600;
+}
+
+.sb-text em {
+  color: var(--am);
+  font-style: normal;
+  font-weight: 500;
+}
+
+.sb-text .hl-green {
+  color: var(--gr);
+}
+
+.sb-text .hl-coral {
+  color: var(--co);
+}
+
+.lookup {
+  background: var(--bg3);
+  border-radius: 6px;
+  padding: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  border: 1px solid var(--bd);
+  margin-top: 6px;
+}
+
+.lookup-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.lookup-codon {
+  color: var(--ac);
+}
+
+.lookup-arrow {
+  color: var(--tx3);
+}
+
+.lookup-aa {
+  color: var(--gr);
+  font-weight: 600;
+}
+
+.lookup-anticodon {
+  color: var(--tx3);
+  font-size: 11px;
+}
