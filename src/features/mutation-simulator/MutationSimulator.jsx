@@ -1,46 +1,83 @@
 //
+// The Mutation Simulator feature. Uses useReducer to manage the editing
+// state: working sequence, active tool, and tracked changes.
 //
-// PHASE 3 PLACEHOLDER. The actual mutation editor, classification engine,
-// and mutant translation animation arrive in Phase 5. For now this
-// component shares the same layout shell as the Translation Walkthrough.
+// Step 5.1 scope: editor plus tool picker. Translation, classification,
+// and animation arrive in Steps 5.3-5.5.
 
-import MrnaStrand from "../../shared/components/MrnaStrand";
-import PolypeptideChain from "../../shared/components/PolypeptideChain";
-import Ribosome from "../../shared/components/Ribosome";
-import PhaseBanner from "../../shared/components/PhaseBanner";
-import { GC } from "../../shared/biology/geneticCode.js";
-import { ORIG_CODONS } from "../../shared/biology/constants.js";
+import { useReducer } from "react";
+import SequenceEditor from "./components/SequenceEditor";
+import ToolPicker from "./components/ToolPicker";
+import {
+  initialMutationState,
+  mutationReducer,
+} from "./mutationReducer.js";
 import "./MutationSimulator.css";
 
 export default function MutationSimulator() {
-  const labels = ORIG_CODONS.map((c) => GC[c] || "???");
-  const allUpcoming = ORIG_CODONS.map(() => "upcoming");
+  const [state, dispatch] = useReducer(
+    mutationReducer,
+    initialMutationState
+  );
+
+  const handleToolChange = (tool) =>
+    dispatch({ type: "SET_TOOL", tool });
+
+  const handleBaseClick = (index) =>
+    dispatch({ type: "CLICK_BASE", index });
+
+  const handleReset = () =>
+    dispatch({ type: "RESET_SEQUENCE" });
 
   return (
     <div className="mutation">
       <div className="mutation-main">
         <div className="stage">
-          <PhaseBanner phase={null} />
-          <div className="ribo-zone">
-            <Ribosome visible={false} />
-          </div>
-          <MrnaStrand
-            codons={ORIG_CODONS}
-            labels={labels}
-            states={allUpcoming}
-            strandId="mutation-strand"
-            headerLabel="Mutated mRNA"
-          />
-          <PolypeptideChain aminoAcids={[]} label="Mutated protein:" />
+          <p className="mut-stage-note">
+            Stage panel: mutant mRNA, protein comparison, and animation
+            will live here in Steps 5.4-5.5.
+          </p>
         </div>
       </div>
+
       <aside className="mutation-side">
         <div className="mut-panel">
           <h3>Mutation Lab</h3>
           <p className="mut-instructions">
-            (Phase 5 will wire this sidebar to the mutation editor,
-            preset buttons, and the analysis card.)
+            Click a base to <strong>change</strong> it. Use the tools to{" "}
+            <strong>delete</strong> or <strong>insert</strong> bases. Then
+            hit <strong>Translate Mutant</strong> to watch the ribosome
+            process the altered mRNA.
           </p>
+
+          <ToolPicker
+            activeTool={state.tool}
+            onToolChange={handleToolChange}
+          />
+
+          <SequenceEditor
+            bases={state.bases}
+            changes={state.changes}
+            onClick={handleBaseClick}
+          />
+
+          <div className="mut-actions">
+            <button
+              type="button"
+              className="btn btn-1"
+              disabled
+              title="Coming in Step 5.4"
+            >
+              Translate Mutant -&gt;
+            </button>
+            <button
+              type="button"
+              className="btn btn-2"
+              onClick={handleReset}
+            >
+              Reset Sequence
+            </button>
+          </div>
         </div>
       </aside>
     </div>

@@ -1,0 +1,68 @@
+.mut-mrna {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  margin-bottom: 12px;
+}
+
+.mut-base {
+  width: 30px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--bg3);
+  border: 1.5px solid var(--bd);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  padding: 0;
+}
+
+.mut-base:hover {
+  border-color: var(--ac);
+  background: var(--bg4);
+  transform: scale(1.08);
+}
+
+.mut-base-A { color: #2dd4a8; }
+.mut-base-U { color: #f56b81; }
+.mut-base-C { color: #3db9f5; }
+.mut-base-G { color: #f5b731; }
+.mut-base-X { color: var(--tx3); }
+
+.mut-base-changed {
+  border-color: var(--co);
+  background: rgba(245, 107, 129, 0.09);
+  box-shadow: 0 0 8px rgba(245, 107, 129, 0.14);
+}
+
+.mut-base-inserted {
+  border-color: var(--gr);
+  background: rgba(45, 212, 168, 0.09);
+  box-shadow: 0 0 8px rgba(45, 212, 168, 0.14);
+}
+
+.mut-base-deleted {
+  opacity: 0.3;
+  text-decoration: line-through;
+  border-color: var(--tx3);
+}
+
+.mut-base .pos {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 7px;
+  color: var(--tx3);
+  font-weight: 400;
+}
+
+.mut-base:nth-child(3n + 1) {
+  margin-left: 4px;
+}
