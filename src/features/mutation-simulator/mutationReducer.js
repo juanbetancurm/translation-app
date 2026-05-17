@@ -19,6 +19,45 @@ import { ORIG_SEQ } from "../../shared/biology/constants.js";
 const BASE_CYCLE = ["A", "U", "C", "G"];
 const ORIG_BASES = ORIG_SEQ.split("");
 
+export const PRESETS = [
+  {
+    id: "missense",
+    label: "Missense (mod)",
+    classification: "Missense - Moderate impact",
+    edits: [{ op: "change", index: 4, to: "A" }],
+  },
+  {
+    id: "nonsense",
+    label: "Nonsense (high)",
+    classification: "Nonsense - High impact",
+    edits: [{ op: "change", index: 6, to: "U" }],
+  },
+  {
+    id: "synonymous",
+    label: "Synonymous (low)",
+    classification: "Synonymous - Low impact",
+    edits: [{ op: "change", index: 11, to: "U" }],
+  },
+  {
+    id: "frameshift-del",
+    label: "Frameshift (del)",
+    classification: "Frameshift deletion - High impact",
+    edits: [{ op: "delete", index: 3 }],
+  },
+  {
+    id: "frameshift-ins",
+    label: "Frameshift (ins)",
+    classification: "Frameshift insertion - High impact",
+    edits: [{ op: "insert", afterIndex: 2, base: "G" }],
+  },
+  {
+    id: "start-lost",
+    label: "Start lost (high)",
+    classification: "Start lost - High impact",
+    edits: [{ op: "change", index: 0, to: "G" }],
+  },
+];
+
 export const initialMutationState = {
   bases: ORIG_BASES,
   tool: "change",
@@ -35,6 +74,9 @@ export function mutationReducer(state, action) {
 
     case "CLICK_BASE":
       return applyClick(state, action.index);
+
+    case "APPLY_PRESET":
+      return applyPreset(action.presetId);
 
     default:
       return state;
@@ -111,6 +153,39 @@ function applyInsertClick(state, index) {
   newChanges.set(index + 1, { type: "insert" });
 
   return { ...state, bases: newBases, changes: newChanges };
+}
+
+function applyPreset(presetId) {
+  const preset = PRESETS.find((candidate) => candidate.id === presetId);
+  if (!preset) return initialMutationState;
+
+  let state = initialMutationState;
+
+  for (const edit of preset.edits) {
+    if (edit.op === "change") {
+      let current = state.bases[edit.index];
+      let safety = 0;
+      while (current !== edit.to && safety < BASE_CYCLE.length) {
+        state = applyChangeClick(state, edit.index);
+        current = state.bases[edit.index];
+        safety++;
+      }
+    } else if (edit.op === "delete") {
+      state = applyDeleteClick(state, edit.index);
+    } else if (edit.op === "insert") {
+      state = applyInsertClick(state, edit.afterIndex);
+      const insertedIndex = edit.afterIndex + 1;
+      let current = state.bases[insertedIndex];
+      let safety = 0;
+      while (current !== edit.base && safety < BASE_CYCLE.length) {
+        state = applyChangeClick(state, insertedIndex);
+        current = state.bases[insertedIndex];
+        safety++;
+      }
+    }
+  }
+
+  return state;
 }
 
 export function getEffectiveSequence(bases) {

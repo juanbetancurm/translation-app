@@ -6,6 +6,7 @@
 // and animation arrive in Steps 5.3-5.5.
 
 import { useReducer } from "react";
+import PresetButtons from "./components/PresetButtons";
 import SequenceEditor from "./components/SequenceEditor";
 import ToolPicker from "./components/ToolPicker";
 import {
@@ -28,6 +29,9 @@ export default function MutationSimulator() {
 
   const handleReset = () =>
     dispatch({ type: "RESET_SEQUENCE" });
+
+  const handleApplyPreset = (presetId) =>
+    dispatch({ type: "APPLY_PRESET", presetId });
 
   return (
     <div className="mutation">
@@ -78,6 +82,8 @@ export default function MutationSimulator() {
               Reset Sequence
             </button>
           </div>
+
+          <PresetButtons onApplyPreset={handleApplyPreset} />
         </div>
       </aside>
     </div>
