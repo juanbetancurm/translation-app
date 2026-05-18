@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local Docker Compose overrides (per-machine, not for version control)
+docker-compose.override.yml
