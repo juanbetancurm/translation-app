@@ -30,7 +30,7 @@ export function classifyMutation(mutantSeq) {
   if (mutantSeq === originalSeq) {
     return result({
       type: MUTATION_TYPES.NO_CHANGE,
-      impact: "Low",
+      impact: "None",
       summary: "No change",
       explanation:
         "The sequence is identical to the original. No mutation has been applied.",

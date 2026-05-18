@@ -15,6 +15,7 @@
 //   { type: "RESET_SEQUENCE" }
 
 import { ORIG_SEQ } from "../../shared/biology/constants.js";
+import { classifyMutation } from "./mutationClassifier.js";
 
 const BASE_CYCLE = ["A", "U", "C", "G"];
 const ORIG_BASES = ORIG_SEQ.split("");
@@ -62,6 +63,7 @@ export const initialMutationState = {
   bases: ORIG_BASES,
   tool: "change",
   changes: new Map(),
+  analysis: null,
 };
 
 export function mutationReducer(state, action) {
@@ -76,7 +78,13 @@ export function mutationReducer(state, action) {
       return applyClick(state, action.index);
 
     case "APPLY_PRESET":
-      return applyPreset(action.presetId);
+      return { ...applyPreset(action.presetId), analysis: null };
+
+    case "TRANSLATE_MUTANT": {
+      const effectiveSeq = getEffectiveSequence(state.bases);
+      const analysis = classifyMutation(effectiveSeq);
+      return { ...state, analysis };
+    }
 
     default:
       return state;

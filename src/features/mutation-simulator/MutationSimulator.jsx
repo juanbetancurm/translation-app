@@ -1,19 +1,27 @@
 //
-// The Mutation Simulator feature. Uses useReducer to manage the editing
-// state: working sequence, active tool, and tracked changes.
+// The Mutation Simulator feature. Composes the reducer-managed editor,
+// preset buttons, classifier wiring, analysis card, and protein comparison.
 //
-// Step 5.1 scope: editor plus tool picker. Translation, classification,
-// and animation arrive in Steps 5.3-5.5.
+// Step 5.5 will add the mutant translation animation.
 
 import { useReducer } from "react";
+import AnalysisCard from "./components/AnalysisCard";
 import PresetButtons from "./components/PresetButtons";
+import ProteinComparison from "./components/ProteinComparison";
 import SequenceEditor from "./components/SequenceEditor";
 import ToolPicker from "./components/ToolPicker";
+import MrnaStrand from "../../shared/components/MrnaStrand";
+import { GC } from "../../shared/biology/geneticCode.js";
+import { ORIG_SEQ } from "../../shared/biology/constants.js";
+import { splitCodons } from "../../shared/biology/translation.js";
 import {
   initialMutationState,
   mutationReducer,
+  getEffectiveSequence,
 } from "./mutationReducer.js";
 import "./MutationSimulator.css";
+
+const STOP_CODONS = new Set(["UAA", "UAG", "UGA"]);
 
 export default function MutationSimulator() {
   const [state, dispatch] = useReducer(
@@ -33,14 +41,58 @@ export default function MutationSimulator() {
   const handleApplyPreset = (presetId) =>
     dispatch({ type: "APPLY_PRESET", presetId });
 
+  const handleTranslate = () =>
+    dispatch({ type: "TRANSLATE_MUTANT" });
+
+  const originalCodons = splitCodons(ORIG_SEQ);
+  const originalLabels = originalCodons.map((codon) => GC[codon] || "???");
+  const originalStates = originalCodons.map(() => "upcoming");
+
+  const effectiveSeq = getEffectiveSequence(state.bases);
+  const mutantCodons = splitCodons(effectiveSeq);
+  const mutantLabels = mutantCodons.map((codon) => GC[codon] || "???");
+  const mutantStates = mutantCodons.map((codon, index) => {
+    if (!STOP_CODONS.has(codon)) return "upcoming";
+
+    const isLastCodon = index === mutantCodons.length - 1;
+    const originalAtSamePosition =
+      index < originalCodons.length ? originalCodons[index] : null;
+    const wasOriginallyStop = STOP_CODONS.has(originalAtSamePosition);
+
+    return isLastCodon && wasOriginallyStop ? "upcoming" : "stop-hit";
+  });
+
   return (
     <div className="mutation">
       <div className="mutation-main">
         <div className="stage">
-          <p className="mut-stage-note">
-            Stage panel: mutant mRNA, protein comparison, and animation
-            will live here in Steps 5.4-5.5.
-          </p>
+          {state.analysis && (
+            <>
+              <AnalysisCard analysis={state.analysis} />
+              <ProteinComparison
+                originalProtein={state.analysis.originalProtein}
+                mutantProtein={state.analysis.mutantProtein}
+                diffPositions={state.analysis.diffPositions}
+              />
+            </>
+          )}
+
+          <div className="mut-strand-wrapper">
+            <MrnaStrand
+              codons={mutantCodons}
+              labels={mutantLabels}
+              states={mutantStates}
+              strandId="mutant-strand"
+              headerLabel="Mutant mRNA"
+            />
+            <MrnaStrand
+              codons={originalCodons}
+              labels={originalLabels}
+              states={originalStates}
+              strandId="original-strand"
+              headerLabel="Original mRNA"
+            />
+          </div>
         </div>
       </div>
 
@@ -50,8 +102,7 @@ export default function MutationSimulator() {
           <p className="mut-instructions">
             Click a base to <strong>change</strong> it. Use the tools to{" "}
             <strong>delete</strong> or <strong>insert</strong> bases. Then
-            hit <strong>Translate Mutant</strong> to watch the ribosome
-            process the altered mRNA.
+            hit <strong>Translate Mutant</strong> to analyze the altered mRNA.
           </p>
 
           <ToolPicker
@@ -69,8 +120,7 @@ export default function MutationSimulator() {
             <button
               type="button"
               className="btn btn-1"
-              disabled
-              title="Coming in Step 5.4"
+              onClick={handleTranslate}
             >
               Translate Mutant -&gt;
             </button>

@@ -22,6 +22,10 @@
   overflow-y: auto;
 }
 
+.mutation .stage {
+  padding: 20px;
+}
+
 .mut-panel {
   padding: 16px 20px;
 }
@@ -52,6 +56,18 @@
   gap: 6px;
   margin-top: 10px;
   flex-wrap: wrap;
+}
+
+.mut-strand-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 720px;
+  width: 100%;
+}
+
+.mut-strand-wrapper .mrna-row {
+  width: 100%;
 }
 
 @media (max-width: 900px) {

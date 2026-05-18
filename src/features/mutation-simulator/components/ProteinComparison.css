@@ -1,0 +1,67 @@
+.protein-compare {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.protein-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.protein-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--tx3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 80px;
+}
+
+.protein-beads {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.bead {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--bg3);
+  border: 1px solid var(--bd);
+  color: var(--tx2);
+  min-width: 32px;
+  text-align: center;
+}
+
+.bead-Met { color: var(--gr); border-color: rgba(45, 212, 168, 0.4); }
+.bead-Pro { color: var(--ac); border-color: rgba(61, 185, 245, 0.4); }
+.bead-Glu { color: var(--co); border-color: rgba(245, 107, 129, 0.4); }
+.bead-Phe { color: #c084fc; border-color: rgba(192, 132, 252, 0.4); }
+.bead-Gly { color: var(--am); border-color: rgba(245, 183, 49, 0.4); }
+.bead-Lys { color: var(--gr); border-color: rgba(45, 212, 168, 0.4); }
+.bead-Ala,
+.bead-Leu,
+.bead-Asn,
+.bead-Ser,
+.bead-His,
+.bead-Val {
+  color: var(--tx2);
+}
+
+.bead-empty {
+  color: var(--tx3);
+  opacity: 0.4;
+}
+
+.bead-diff {
+  box-shadow: 0 0 0 2px var(--co);
+  transform: scale(1.05);
+}
