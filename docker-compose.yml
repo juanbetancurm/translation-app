@@ -1,0 +1,23 @@
+# docker-compose.yml
+#
+# Runtime configuration for the Translation Lab container.
+# Locally, run with `docker compose up -d` and open http://localhost:8080.
+# On the VPS, the reverse proxy can reach this service by container name
+# through the shared external `web` network.
+
+services:
+  translation-lab:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: translation-lab:latest
+    container_name: translation-lab
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
