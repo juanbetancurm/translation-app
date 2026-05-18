@@ -15,10 +15,22 @@
 //   { type: "RESET_SEQUENCE" }
 
 import { ORIG_SEQ } from "../../shared/biology/constants.js";
-import { classifyMutation } from "./mutationClassifier.js";
+import { GC } from "../../shared/biology/geneticCode.js";
+import { splitCodons } from "../../shared/biology/translation.js";
+import { classifyMutation, MUTATION_TYPES } from "./mutationClassifier.js";
 
 const BASE_CYCLE = ["A", "U", "C", "G"];
 const ORIG_BASES = ORIG_SEQ.split("");
+const STOP_CODONS = new Set(["UAA", "UAG", "UGA"]);
+
+const initialAnimationState = {
+  isPlaying: false,
+  stepIndex: -1,
+  riboCodonIndex: 0,
+  protein: [],
+  isFinished: false,
+  speed: 1000,
+};
 
 export const PRESETS = [
   {
@@ -64,6 +76,7 @@ export const initialMutationState = {
   tool: "change",
   changes: new Map(),
   analysis: null,
+  animation: initialAnimationState,
 };
 
 export function mutationReducer(state, action) {
@@ -78,17 +91,153 @@ export function mutationReducer(state, action) {
       return applyClick(state, action.index);
 
     case "APPLY_PRESET":
-      return { ...applyPreset(action.presetId), analysis: null };
+      return {
+        ...applyPreset(action.presetId),
+        analysis: null,
+        animation: initialAnimationState,
+      };
 
     case "TRANSLATE_MUTANT": {
       const effectiveSeq = getEffectiveSequence(state.bases);
       const analysis = classifyMutation(effectiveSeq);
-      return { ...state, analysis };
+      return { ...state, analysis, animation: initialAnimationState };
     }
+
+    case "START_TRANSLATION": {
+      if (isStartLost(state)) {
+        return {
+          ...state,
+          animation: {
+            ...state.animation,
+            isPlaying: false,
+            stepIndex: -1,
+            riboCodonIndex: 0,
+            protein: [],
+            isFinished: true,
+          },
+        };
+      }
+
+      const shouldResume =
+        state.animation.stepIndex >= 0 && !state.animation.isFinished;
+      return {
+        ...state,
+        animation: {
+          ...state.animation,
+          isPlaying: true,
+          stepIndex: shouldResume ? state.animation.stepIndex : -1,
+          riboCodonIndex: shouldResume ? state.animation.riboCodonIndex : 0,
+          protein: shouldResume ? state.animation.protein : [],
+          isFinished: false,
+        },
+      };
+    }
+
+    case "ANIMATION_TICK":
+      return advanceAnimation(state);
+
+    case "STOP_TRANSLATION":
+      return {
+        ...state,
+        animation: {
+          ...state.animation,
+          isPlaying: false,
+        },
+      };
+
+    case "SET_ANIMATION_SPEED":
+      return {
+        ...state,
+        animation: {
+          ...state.animation,
+          speed: action.speed,
+        },
+      };
+
+    case "RESET_TRANSLATION_ANIMATION":
+      return {
+        ...state,
+        animation: initialAnimationState,
+      };
 
     default:
       return state;
   }
+}
+
+function advanceAnimation(state) {
+  const { animation } = state;
+  if (isStartLost(state)) {
+    return {
+      ...state,
+      animation: {
+        ...animation,
+        isPlaying: false,
+        stepIndex: -1,
+        riboCodonIndex: 0,
+        protein: [],
+        isFinished: true,
+      },
+    };
+  }
+  if (animation.isFinished) return state;
+
+  const codons = splitCodons(getEffectiveSequence(state.bases));
+  const nextStep = animation.stepIndex + 1;
+
+  if (nextStep >= codons.length) {
+    return {
+      ...state,
+      animation: {
+        ...animation,
+        isPlaying: false,
+        isFinished: true,
+      },
+    };
+  }
+
+  const currentCodon = codons[nextStep];
+
+  if (STOP_CODONS.has(currentCodon)) {
+    return {
+      ...state,
+      animation: {
+        ...animation,
+        stepIndex: nextStep,
+        riboCodonIndex: nextStep,
+        isPlaying: false,
+        isFinished: true,
+      },
+    };
+  }
+
+  const aminoAcid = GC[currentCodon];
+  if (!aminoAcid) {
+    return {
+      ...state,
+      animation: {
+        ...animation,
+        stepIndex: nextStep,
+        riboCodonIndex: nextStep,
+        isPlaying: false,
+        isFinished: true,
+      },
+    };
+  }
+
+  return {
+    ...state,
+    animation: {
+      ...animation,
+      stepIndex: nextStep,
+      riboCodonIndex: nextStep,
+      protein: [...animation.protein, aminoAcid],
+    },
+  };
+}
+
+function isStartLost(state) {
+  return state.analysis?.type === MUTATION_TYPES.START_LOST;
 }
 
 function applyClick(state, index) {

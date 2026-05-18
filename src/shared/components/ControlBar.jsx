@@ -17,6 +17,7 @@
 //   isAutoRunning    boolean; switches button label to "Pause" and adds
 //                    the .on style
 //   nextDisabled     boolean; disables the Next button
+//   autoDisabled     boolean; disables the Auto/Pause button
 //   speed            current speed in milliseconds
 //   minSpeed         slider minimum (default 400)
 //   maxSpeed         slider maximum (default 2500)
@@ -32,6 +33,7 @@ export default function ControlBar({
   onSpeedChange,
   isAutoRunning = false,
   nextDisabled = false,
+  autoDisabled = false,
   speed = 1200,
   minSpeed = 400,
   maxSpeed = 2500,
@@ -53,6 +55,7 @@ export default function ControlBar({
         type="button"
         className={`btn btn-3${isAutoRunning ? " btn-on" : ""}`}
         onClick={onToggleAuto}
+        disabled={autoDisabled}
       >
         {isAutoRunning ? "⏸ Pause" : "▶ Auto"}
       </button>
