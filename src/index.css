@@ -24,47 +24,89 @@
 
 :root {
   /* Surfaces */
-  --bg:  #090b10;
-  --bg2: #11141c;
-  --bg3: #191d2a;
-  --bg4: #222838;
+  --craft-ink: #0f2742;
+  --craft-ink-soft: #58708f;
+  --craft-blue: #2563eb;
+  --craft-blue-deep: #1d4ed8;
+  --craft-cloud: #eef5ff;
+  --craft-paper: #f8fbff;
+  --craft-paper-warm: #f2f7ff;
+  --craft-sand: #d8e7ff;
+  --craft-line: rgba(37, 99, 235, 0.12);
+  --craft-shadow-sm: 0 12px 32px rgba(29, 78, 216, 0.1);
+  --craft-shadow-lg: 0 24px 58px rgba(29, 78, 216, 0.16);
+  --craft-radius-card: 28px;
+  --craft-radius-pill: 999px;
+  --craft-transition: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  --bg: #f3f8ff;
+  --bg2: #f8fbff;
+  --bg3: #eef5ff;
+  --bg4: #d8e7ff;
 
   /* Text */
-  --tx:  #e4e8f1;
-  --tx2: #8d99b4;
-  --tx3: #586580;
+  --tx: var(--craft-ink);
+  --tx2: var(--craft-ink-soft);
+  --tx3: #5f84bf;
 
   /* Accent — blue (used for active codon, primary buttons) */
-  --ac:  #3db9f5;
-  --ac2: #6d8cff;
+  --ac: var(--craft-blue);
+  --ac2: var(--craft-blue-deep);
 
   /* Green (used for A bases, normal protein, success states) */
-  --gr:  #2dd4a8;
+  --gr:  #0f9f77;
   --gr2: #0d9668;
 
   /* Amber (used for G bases, A-site tRNA, moderate impact) */
-  --am:  #f5b731;
+  --am:  #c48a12;
   --am2: #c48a12;
 
   /* Coral (used for U bases, mutated state, high impact) */
-  --co:  #f56b81;
+  --co:  #d42f50;
   --co2: #d42f50;
 
   /* Purple (used for P-site tRNA, "Pro" amino acid badge accent) */
-  --pu:  #a07bf5;
+  --pu:  #7c3aed;
 
   /* Teal (used for Lys amino acid color) */
-  --te:  #25cdb7;
+  --te:  #0f766e;
 
   /* Pink (used for Arg amino acid color) */
-  --pi:  #e879a8;
+  --pi:  #db2777;
+
+  /* Biology display colors */
+  --base-a: var(--gr);
+  --base-u: var(--co);
+  --base-c: var(--ac);
+  --base-g: var(--am);
 
   /* Borders */
-  --bd: #252d3f;
+  --bd: var(--craft-line);
 
   /* Fonts */
   --mono: "JetBrains Mono", monospace;
-  --sans: "Space Grotesk", system-ui, sans-serif;
+  --sans: "Aptos", "Trebuchet MS", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="dark"] {
+  --craft-ink: #edf5ff;
+  --craft-ink-soft: #abc0db;
+  --craft-blue: #60a5fa;
+  --craft-blue-deep: #3b82f6;
+  --craft-line: rgba(96, 165, 250, 0.16);
+  --craft-shadow-sm: 0 12px 32px rgba(4, 0, 12, 0.38);
+  --craft-shadow-lg: 0 24px 58px rgba(4, 0, 12, 0.48);
+
+  --bg: #07111f;
+  --bg2: #0b1b30;
+  --bg3: #0f2742;
+  --bg4: #17385f;
+  --tx: var(--craft-ink);
+  --tx2: var(--craft-ink-soft);
+  --tx3: #7fa0c7;
+  --ac: var(--craft-blue);
+  --ac2: var(--craft-blue-deep);
+  --bd: var(--craft-line);
 }
 
 /* Reset — minimal, deliberate. */
@@ -78,6 +120,7 @@
 
 body {
   font-family: var(--sans);
+  line-height: 1.6;
   background: var(--bg);
   color: var(--tx);
   min-height: 100vh;

@@ -17,7 +17,7 @@
   font-weight: 700;
   color: var(--tx3);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.12em;
   width: 80px;
 }
 
@@ -30,23 +30,23 @@
 .bead {
   display: inline-block;
   padding: 4px 10px;
-  border-radius: 12px;
+  border-radius: var(--craft-radius-pill);
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 700;
-  background: var(--bg3);
+  background: rgba(216, 231, 255, 0.5);
   border: 1px solid var(--bd);
   color: var(--tx2);
   min-width: 32px;
   text-align: center;
 }
 
-.bead-Met { color: var(--gr); border-color: rgba(45, 212, 168, 0.4); }
-.bead-Pro { color: var(--ac); border-color: rgba(61, 185, 245, 0.4); }
-.bead-Glu { color: var(--co); border-color: rgba(245, 107, 129, 0.4); }
-.bead-Phe { color: #c084fc; border-color: rgba(192, 132, 252, 0.4); }
-.bead-Gly { color: var(--am); border-color: rgba(245, 183, 49, 0.4); }
-.bead-Lys { color: var(--gr); border-color: rgba(45, 212, 168, 0.4); }
+.bead-Met { color: var(--gr); border-color: rgba(15, 159, 119, 0.38); }
+.bead-Pro { color: var(--ac); border-color: rgba(37, 99, 235, 0.38); }
+.bead-Glu { color: var(--co); border-color: rgba(212, 47, 80, 0.38); }
+.bead-Phe { color: var(--pu); border-color: rgba(124, 58, 237, 0.36); }
+.bead-Gly { color: var(--am); border-color: rgba(196, 138, 18, 0.38); }
+.bead-Lys { color: var(--te); border-color: rgba(15, 118, 110, 0.38); }
 .bead-Ala,
 .bead-Leu,
 .bead-Asn,
@@ -64,4 +64,20 @@
 .bead-diff {
   box-shadow: 0 0 0 2px var(--co);
   transform: scale(1.05);
+}
+
+@media (max-width: 520px) {
+  .protein-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .protein-label {
+    width: auto;
+  }
+}
+
+[data-theme="dark"] .bead {
+  background: rgba(15, 39, 66, 0.56);
 }

@@ -24,13 +24,15 @@
 }
 
 .lookup {
-  background: var(--bg3);
-  border-radius: 6px;
-  padding: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(242, 247, 255, 0.78));
+  border-radius: 16px;
+  padding: 12px;
   font-family: var(--mono);
   font-size: 12px;
   border: 1px solid var(--bd);
-  margin-top: 6px;
+  margin-top: 8px;
+  box-shadow: var(--craft-shadow-sm);
 }
 
 .lookup-row {
@@ -55,4 +57,9 @@
 .lookup-anticodon {
   color: var(--tx3);
   font-size: 11px;
+}
+
+[data-theme="dark"] .lookup {
+  background:
+    linear-gradient(180deg, rgba(15, 39, 66, 0.82), rgba(7, 17, 31, 0.72));
 }

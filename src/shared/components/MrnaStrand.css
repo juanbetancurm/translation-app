@@ -7,18 +7,33 @@
   width: 100%;
   max-width: 680px;
   flex-shrink: 0;
+  min-width: 0;
 }
 
 .mrna-lbl {
   font-family: var(--mono);
   font-size: 10px;
   color: var(--tx3);
-  margin-bottom: 3px;
+  margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .mrna {
   display: flex;
   gap: 2px;
+  padding: 10px;
+  border: 1px solid var(--bd);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(242, 247, 255, 0.58));
+  box-shadow: var(--craft-shadow-sm);
+}
+
+[data-theme="dark"] .mrna {
+  background:
+    linear-gradient(180deg, rgba(15, 39, 66, 0.72), rgba(7, 17, 31, 0.58));
 }

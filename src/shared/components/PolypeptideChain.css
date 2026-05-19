@@ -15,21 +15,29 @@
 .pep-lbl {
   font-size: 11px;
   color: var(--tx3);
-  margin-bottom: 4px;
-  font-weight: 500;
+  margin-bottom: 6px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .pep {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px;
+  gap: 4px;
   align-items: center;
   min-height: 28px;
+  padding: 10px;
+  border: 1px solid var(--bd);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(242, 247, 255, 0.58));
+  box-shadow: var(--craft-shadow-sm);
 }
 
 .aa {
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  border-radius: var(--craft-radius-pill);
   font-size: 11px;
   font-weight: 700;
   font-family: var(--mono);
@@ -57,4 +65,9 @@
   color: var(--tx3);
   font-size: 9px;
   margin: 0 -1px;
+}
+
+[data-theme="dark"] .pep {
+  background:
+    linear-gradient(180deg, rgba(15, 39, 66, 0.72), rgba(7, 17, 31, 0.58));
 }

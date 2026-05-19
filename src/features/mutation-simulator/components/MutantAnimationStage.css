@@ -6,10 +6,14 @@
 
 .mutant-anim-stage .controls {
   margin-top: 0;
-  padding: 10px;
-  background: var(--bg);
+  padding: 12px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.86),
+    rgba(242, 247, 255, 0.72)
+  );
   border: 1px solid var(--bd);
-  border-radius: 6px;
+  border-radius: 20px;
 }
 
 .mutant-anim-stage .speed {
@@ -20,4 +24,12 @@
 
 .mutant-anim-stage .speed input {
   width: 170px;
+}
+
+[data-theme="dark"] .mutant-anim-stage .controls {
+  background: linear-gradient(
+    180deg,
+    rgba(15, 39, 66, 0.82),
+    rgba(7, 17, 31, 0.72)
+  );
 }

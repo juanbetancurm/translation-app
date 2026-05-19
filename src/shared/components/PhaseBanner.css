@@ -4,32 +4,33 @@
   top: 12px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 6px 20px;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 7px 20px;
+  border-radius: var(--craft-radius-pill);
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   z-index: 10;
+  box-shadow: 0 10px 22px rgba(29, 78, 216, 0.1);
   animation: phaseBannerFadeIn 0.4s both;
 }
 
 .pb-init {
-  background: rgba(61, 185, 245, 0.125);
+  background: rgba(37, 99, 235, 0.1);
   color: var(--ac);
-  border: 1px solid rgba(61, 185, 245, 0.25);
+  border: 1px solid rgba(37, 99, 235, 0.22);
 }
 
 .pb-elong {
-  background: rgba(45, 212, 168, 0.125);
+  background: rgba(15, 159, 119, 0.12);
   color: var(--gr);
-  border: 1px solid rgba(45, 212, 168, 0.25);
+  border: 1px solid rgba(15, 159, 119, 0.24);
 }
 
 .pb-term {
-  background: rgba(245, 107, 129, 0.125);
+  background: rgba(212, 47, 80, 0.12);
   color: var(--co);
-  border: 1px solid rgba(245, 107, 129, 0.25);
+  border: 1px solid rgba(212, 47, 80, 0.24);
 }
 
 @keyframes phaseBannerFadeIn {

@@ -11,37 +11,46 @@
   overflow: hidden;
   position: relative;
   min-height: 0;
+  min-width: 0;
 }
 
 .mutation-side {
   width: 360px;
   min-width: 320px;
-  background: var(--bg2);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(242, 247, 255, 0.98)
+  );
   border-left: 1px solid var(--bd);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  box-shadow: -12px 0 32px rgba(29, 78, 216, 0.08);
 }
 
 .mutation .stage {
   padding: 20px;
   justify-content: flex-start;
-  overflow-y: auto;
+  overflow: auto;
   width: 100%;
   box-sizing: border-box;
   gap: 12px;
   min-height: 0;
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.07), transparent 34%),
+    var(--bg);
 }
 
 .mut-panel {
-  padding: 16px 20px;
+  padding: 18px 20px;
 }
 
 .mut-panel h3 {
   font-size: 12px;
   font-weight: 700;
-  color: var(--co);
-  letter-spacing: 0.5px;
+  color: var(--ac);
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   margin-bottom: 8px;
 }
@@ -60,13 +69,15 @@
 
 .mut-actions {
   display: flex;
-  gap: 6px;
-  margin-top: 10px;
+  gap: 8px;
+  margin-top: 12px;
   flex-wrap: wrap;
 }
 
 .mut-animation-panel {
   margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--bd);
 }
 
 .mut-animation-panel h3 {
@@ -117,7 +128,7 @@
   min-height: 28px;
   padding: 4px 10px;
   border: 1px dashed rgba(245, 107, 129, 0.45);
-  border-radius: 6px;
+  border-radius: var(--craft-radius-pill);
   color: var(--co);
   background: rgba(245, 107, 129, 0.08);
   font-family: var(--mono);
@@ -139,8 +150,34 @@
     border-left: none;
     border-top: 1px solid var(--bd);
     max-height: 45vh;
+    box-shadow: 0 -12px 32px rgba(29, 78, 216, 0.08);
   }
   .mutation-main {
     min-height: 55vh;
   }
+}
+
+@media (max-width: 520px) {
+  .mutation .stage {
+    padding: 16px;
+  }
+
+  .mut-panel {
+    padding: 16px;
+  }
+}
+
+[data-theme="dark"] .mutation-side {
+  background: linear-gradient(
+    180deg,
+    rgba(12, 30, 53, 0.98),
+    rgba(8, 20, 36, 0.98)
+  );
+  box-shadow: -12px 0 32px rgba(4, 0, 12, 0.34);
+}
+
+[data-theme="dark"] .mutation .stage {
+  background:
+    radial-gradient(circle at top right, rgba(96, 165, 250, 0.1), transparent 34%),
+    var(--bg);
 }

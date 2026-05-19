@@ -3,37 +3,48 @@
 }
 
 .preset-buttons h4 {
-  font-family: var(--mono);
   font-size: 10px;
   font-weight: 700;
   color: var(--tx3);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.14em;
   margin: 0 0 8px 0;
 }
 
 .preset-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5px;
+  gap: 8px;
 }
 
 .preset-btn {
-  padding: 8px 10px;
-  border-radius: 5px;
+  min-height: 38px;
+  padding: 8px 12px;
+  border-radius: 16px;
   border: 1px solid var(--bd);
-  background: var(--bg3);
+  background: rgba(216, 231, 255, 0.5);
   color: var(--tx2);
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   font-family: var(--sans);
-  transition: all 0.15s;
+  transition:
+    background var(--craft-transition),
+    border-color var(--craft-transition),
+    box-shadow var(--craft-transition),
+    color var(--craft-transition),
+    transform var(--craft-transition);
   text-align: left;
 }
 
 .preset-btn:hover {
   border-color: var(--ac);
   color: var(--tx);
-  background: var(--bg4);
+  background: rgba(37, 99, 235, 0.1);
+  box-shadow: 0 10px 22px rgba(29, 78, 216, 0.08);
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .preset-btn {
+  background: rgba(15, 39, 66, 0.56);
 }

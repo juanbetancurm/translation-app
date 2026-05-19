@@ -23,15 +23,21 @@
 
 .cdn-bases {
   display: flex;
-  border-radius: 4px;
+  border-radius: 12px;
   overflow: hidden;
   border: 1.5px solid var(--bd);
-  transition: all 0.3s;
+  box-shadow: 0 10px 22px rgba(29, 78, 216, 0.08);
+  transition:
+    border-color var(--craft-transition),
+    box-shadow var(--craft-transition),
+    opacity var(--craft-transition);
 }
 
 .cdn-active .cdn-bases {
   border-color: var(--ac);
-  box-shadow: 0 0 10px rgba(61, 185, 245, 0.19);  /* #3db9f530 */
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.12),
+    0 16px 28px rgba(29, 78, 216, 0.18);
 }
 
 .cdn-done .cdn-bases {
@@ -44,12 +50,16 @@
 
 .cdn-mutated .cdn-bases {
   border-color: var(--co);
-  box-shadow: 0 0 10px rgba(245, 107, 129, 0.19);  /* #f56b8130 */
+  box-shadow:
+    0 0 0 3px rgba(212, 47, 80, 0.12),
+    0 16px 28px rgba(212, 47, 80, 0.12);
 }
 
 .cdn-stop-hit .cdn-bases {
   border-color: var(--co);
-  box-shadow: 0 0 14px rgba(245, 107, 129, 0.25);  /* #f56b8140 */
+  box-shadow:
+    0 0 0 3px rgba(212, 47, 80, 0.16),
+    0 16px 30px rgba(212, 47, 80, 0.18);
 }
 
 /* Individual base squares */
@@ -62,21 +72,23 @@
   font-family: var(--mono);
   font-size: 13px;
   font-weight: 700;
-  background: var(--bg3);
-  transition: all 0.2s;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(238, 245, 255, 0.92));
+  transition:
+    background var(--craft-transition),
+    color var(--craft-transition);
 }
 
 .b + .b {
   border-left: 1px solid var(--bd);
 }
 
-.b-A { color: #2dd4a8; }
-.b-U { color: #f56b81; }
-.b-C { color: #3db9f5; }
-.b-G { color: #f5b731; }
+.b-A { color: var(--base-a); }
+.b-U { color: var(--base-u); }
+.b-C { color: var(--base-c); }
+.b-G { color: var(--base-g); }
 
 .b-mutated {
-  background: rgba(245, 107, 129, 0.15);  /* #f56b8125 */
+  background: rgba(212, 47, 80, 0.12);
   position: relative;
 }
 
@@ -87,9 +99,17 @@
   color: var(--tx3);
   margin-top: 2px;
   height: 13px;
-  transition: all 0.2s;
+  transition: color var(--craft-transition);
 }
 
 .cdn-active .cdn-lbl {
   color: var(--ac);
+}
+
+[data-theme="dark"] .cdn-bases {
+  box-shadow: 0 10px 22px rgba(4, 0, 12, 0.22);
+}
+
+[data-theme="dark"] .b {
+  background: linear-gradient(180deg, rgba(15, 39, 66, 0.92), rgba(11, 27, 48, 0.92));
 }

@@ -2,42 +2,110 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--bg);
 }
 
 .tabs {
   display: flex;
-  background: var(--bg2);
+  gap: 8px;
+  align-items: center;
+  padding: 6px 12px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(242, 247, 255, 0.98)
+  );
   border-bottom: 1px solid var(--bd);
   height: 49px;
   flex-shrink: 0;
+  box-shadow: 0 12px 32px rgba(29, 78, 216, 0.08);
 }
 
 .tab {
-  padding: 14px 28px;
+  min-height: 36px;
+  padding: 8px 16px;
+  border-radius: var(--craft-radius-pill);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
+  border: 1px solid transparent;
   color: var(--tx2);
-  transition: all 0.2s;
+  transition:
+    color var(--craft-transition),
+    background var(--craft-transition),
+    border-color var(--craft-transition),
+    box-shadow var(--craft-transition),
+    transform var(--craft-transition);
   user-select: none;
-  text-decoration: none;  /* NavLink renders an <a> by default */
+  text-decoration: none;
   display: flex;
   align-items: center;
 }
 
 .tab:hover {
   color: var(--tx);
-  background: var(--bg3);
+  background: rgba(216, 231, 255, 0.48);
+  border-color: rgba(37, 99, 235, 0.14);
+  transform: translateY(-1px);
 }
 
 .tab-active {
   color: var(--ac);
-  border-bottom-color: var(--ac);
-  background: var(--bg);
+  border-color: rgba(37, 99, 235, 0.22);
+  background: rgba(37, 99, 235, 0.1);
+  box-shadow: 0 10px 22px rgba(29, 78, 216, 0.08);
 }
 
 .tab-icon {
   margin-right: 6px;
-  font-size: 16px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ac2);
+}
+
+[data-theme="dark"] .tabs {
+  background: linear-gradient(
+    180deg,
+    rgba(12, 30, 53, 0.98),
+    rgba(8, 20, 36, 0.98)
+  );
+  box-shadow: 0 12px 32px rgba(4, 0, 12, 0.36);
+}
+
+[data-theme="dark"] .tab:hover {
+  background: rgba(96, 165, 250, 0.1);
+  border-color: rgba(96, 165, 250, 0.16);
+}
+
+[data-theme="dark"] .tab-active {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: rgba(191, 219, 254, 0.16);
+  box-shadow: 0 10px 22px rgba(4, 0, 12, 0.26);
+}
+
+@media (max-width: 560px) {
+  .tabs {
+    gap: 6px;
+    padding: 6px 8px;
+  }
+
+  .tab {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .tab {
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+
+  .tab-icon {
+    display: none;
+  }
 }

@@ -1,30 +1,41 @@
 .tool-picker {
   display: flex;
-  gap: 6px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
 }
 
 .mut-btn {
-  padding: 6px 12px;
-  border-radius: 5px;
+  min-height: 34px;
+  padding: 7px 12px;
+  border-radius: var(--craft-radius-pill);
   border: 1px solid var(--bd);
-  background: var(--bg3);
+  background: rgba(216, 231, 255, 0.5);
   color: var(--tx2);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   font-family: var(--sans);
-  transition: all 0.15s;
+  transition:
+    background var(--craft-transition),
+    border-color var(--craft-transition),
+    color var(--craft-transition),
+    transform var(--craft-transition);
 }
 
 .mut-btn:hover {
   border-color: var(--ac);
   color: var(--tx);
+  background: rgba(37, 99, 235, 0.1);
+  transform: translateY(-1px);
 }
 
 .mut-btn-active {
   border-color: var(--co);
   color: var(--co);
   background: rgba(245, 107, 129, 0.08);
+}
+
+[data-theme="dark"] .mut-btn {
+  background: rgba(15, 39, 66, 0.56);
 }

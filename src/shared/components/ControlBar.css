@@ -1,24 +1,35 @@
 
 .controls {
   padding: 12px 16px;
-  background: var(--bg);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(242, 247, 255, 0.98)
+  );
   border-top: 1px solid var(--bd);
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
   align-items: center;
   margin-top: auto;
 }
 
 .btn {
+  min-height: 38px;
   padding: 9px 16px;
-  border-radius: 6px;
-  border: none;
+  border-radius: var(--craft-radius-pill);
+  border: 1px solid transparent;
   cursor: pointer;
   font-family: var(--sans);
   font-size: 12px;
-  font-weight: 600;
-  transition: all 0.15s;
+  font-weight: 700;
+  transition:
+    background var(--craft-transition),
+    border-color var(--craft-transition),
+    box-shadow var(--craft-transition),
+    color var(--craft-transition),
+    transform var(--craft-transition),
+    opacity var(--craft-transition);
   display: flex;
   align-items: center;
   gap: 5px;
@@ -32,29 +43,35 @@
 /* Primary button (Next Step) — solid accent color */
 .btn-1 {
   background: var(--ac);
-  color: var(--bg);
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(29, 78, 216, 0.16);
 }
 
 .btn-1:hover:not(:disabled) {
-  background: #6dd0f7;
+  background: var(--ac2);
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px rgba(29, 78, 216, 0.22);
 }
 
 /* Secondary button (Reset) — outlined, subtle */
 .btn-2 {
-  background: var(--bg3);
+  background: rgba(216, 231, 255, 0.5);
   color: var(--tx2);
   border: 1px solid var(--bd);
 }
 
 .btn-2:hover {
-  background: var(--bg4);
+  background: rgba(37, 99, 235, 0.1);
+  border-color: rgba(37, 99, 235, 0.22);
   color: var(--tx);
+  transform: translateY(-1px);
 }
 
 /* Toggle button (Auto/Pause) — green when off, red when on */
 .btn-3 {
   background: var(--gr2);
   color: #fff;
+  box-shadow: 0 10px 22px rgba(13, 150, 104, 0.14);
 }
 
 .btn-3.btn-on {
@@ -62,7 +79,8 @@
 }
 
 .btn-3:hover {
-  opacity: 0.9;
+  opacity: 0.94;
+  transform: translateY(-1px);
 }
 
 /* Speed slider container */
@@ -73,9 +91,44 @@
   margin-left: auto;
   font-size: 11px;
   color: var(--tx3);
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 .speed input {
   width: 70px;
   accent-color: var(--ac);
+}
+
+@media (max-width: 520px) {
+  .controls {
+    align-items: stretch;
+  }
+
+  .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .speed {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+
+  .speed input {
+    width: min(170px, 55vw);
+  }
+}
+
+[data-theme="dark"] .controls {
+  background: linear-gradient(
+    180deg,
+    rgba(12, 30, 53, 0.98),
+    rgba(8, 20, 36, 0.98)
+  );
+}
+
+[data-theme="dark"] .btn-2 {
+  background: rgba(15, 39, 66, 0.56);
 }
