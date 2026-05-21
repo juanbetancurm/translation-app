@@ -1,102 +1,71 @@
 /*
- *
- * The ribosome sprite, positioned absolutely within its parent .ribo-zone.
- * The `left` value is set inline by the React component. Everything else
- * is in CSS.
+ * Sprite-based ribosome, positioned absolutely within .ribo-zone.
+ * The public sprite paths are:
+ *   /sprites/ribosome-large.png
+ *   /sprites/ribosome-small.png
  */
 
-/* Parent container that hosts the ribosome and the tRNAs. The mRNA strand
- * sits below it, and getBoundingClientRect math is done relative to it. */
 .ribo-zone {
-  /* position and dimensions are now controlled by the parent
-   * .strand-with-ribo wrapper. We just inherit. */
   position: relative;
   width: 100%;
-  height: 210px;
+  height: 285px;
 }
 
 .ribo {
   position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* Smooth horizontal slide when `left` changes (translocation step).
-   * The cubic-bezier gives a satisfying ease-in-out feel. */
-  transition: left 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.5s ease;
+  width: 300px;
+  height: 300px;
+  transition:
+    left 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.5s ease;
 }
 
 .ribo-fading {
   opacity: 0;
 }
 
-/* 60S large subunit — top */
 .ribo-lg {
-  width: 168px;
-  height: 64px;
-  background:
-    radial-gradient(circle at top left, rgba(96, 165, 250, 0.24), transparent 46%),
-    linear-gradient(145deg, #ffffff, #e7f0ff);
-  border: 1.5px solid rgba(37, 99, 235, 0.2);
-  border-radius: 14px 14px 5px 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  position: relative;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 14px 28px rgba(29, 78, 216, 0.12);
-  /* Transition the opacity so when largeVisible toggles, it fades in. */
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 300px;
+  height: 200px;
+  background: url("/sprites/ribosome-large.png") center / contain no-repeat;
+  z-index: 4;
+  filter: drop-shadow(0 18px 24px rgba(116, 83, 43, 0.16));
   transition: opacity 0.5s ease;
 }
 
-.ribo-lg span {
-  font-size: 10px;
-  color: var(--tx);
-  font-weight: 600;
-  letter-spacing: 0.6px;
-}
-
-/* 40S small subunit — bottom */
 .ribo-sm {
-  width: 148px;
-  height: 46px;
-  background:
-    radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.16), transparent 48%),
-    linear-gradient(145deg, #eef5ff, #d8e7ff);
-  border: 1.5px solid rgba(37, 99, 235, 0.18);
-  border-radius: 5px 5px 12px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: -1px;
-  z-index: 2;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.82),
-    0 10px 22px rgba(29, 78, 216, 0.1);
+  position: absolute;
+  left: 0;
+  top: 124px;
+  width: 300px;
+  height: 175px;
+  background: url("/sprites/ribosome-small.png") center / contain no-repeat;
+  z-index: 4;
+  filter: drop-shadow(0 14px 22px rgba(116, 83, 43, 0.14));
 }
 
-.ribo-sm span {
-  font-size: 10px;
-  color: var(--tx2);
-  font-weight: 500;
-}
-
-/* E / P / A site labels between the two subunits */
 .sites {
+  position: absolute;
+  left: 30px;
+  top: 158px;
   display: flex;
-  width: 168px;
-  margin-top: 4px;
+  width: 240px;
+  z-index: 6;
   transition: opacity 0.5s ease;
 }
 
 .sites span {
   flex: 1;
   text-align: center;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   font-family: var(--mono);
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9),
+    0 6px 14px rgba(29, 78, 216, 0.1);
 }
 
 .site-e { color: var(--tx3); }
@@ -104,17 +73,9 @@
 .site-a { color: var(--am); }
 
 [data-theme="dark"] .ribo-lg {
-  background: linear-gradient(145deg, #2a3555, #1a2440);
-  border-color: #3b4a6b;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 14px 28px rgba(4, 0, 12, 0.28);
+  filter: drop-shadow(0 18px 24px rgba(4, 0, 12, 0.34));
 }
 
 [data-theme="dark"] .ribo-sm {
-  background: linear-gradient(145deg, #1a2440, #131b30);
-  border-color: #2d3a52;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 10px 22px rgba(4, 0, 12, 0.24);
+  filter: drop-shadow(0 14px 22px rgba(4, 0, 12, 0.3));
 }

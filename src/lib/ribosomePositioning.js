@@ -16,11 +16,7 @@
 // (produced by getBoundingClientRect) and returns a number. That keeps
 // the math pure and isolated from React.
 
-// Half the ribosome's visible width. The 60S subunit is 168px wide
-// (defined in src/shared/components/Ribosome.css). To center the
-// ribosome over a codon, we offset its `left` by -RIBOSOME_HALF_WIDTH
-// from the codon's center.
-const RIBOSOME_HALF_WIDTH = 84;
+import { RIBOSOME_HALF_WIDTH } from "./ribosomeGeometry.js";
 
 export function computeCodonCenter(codonRect, containerRect) {
   if (!codonRect || !containerRect) return null;

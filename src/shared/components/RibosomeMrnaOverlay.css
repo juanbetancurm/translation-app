@@ -1,0 +1,82 @@
+.ribo-mrna-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 146px;
+  height: 38px;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.46;
+}
+
+.ribo-mrna-thread {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 17px;
+  height: 8px;
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.18), transparent),
+    rgba(255, 255, 255, 0.42);
+  box-shadow: 0 8px 22px rgba(29, 78, 216, 0.08);
+}
+
+.ribo-mrna-codon {
+  position: absolute;
+  top: 4px;
+  display: flex;
+  transform: translateX(-50%);
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 18px rgba(29, 78, 216, 0.08);
+}
+
+.ribo-mrna-codon-active {
+  opacity: 1;
+  border-color: rgba(37, 99, 235, 0.46);
+  box-shadow:
+    0 0 0 2px rgba(37, 99, 235, 0.12),
+    0 10px 22px rgba(29, 78, 216, 0.12);
+}
+
+.ribo-mrna-codon-done,
+.ribo-mrna-codon-upcoming {
+  opacity: 0.42;
+}
+
+.ribo-mrna-codon-stop-hit {
+  border-color: rgba(212, 47, 80, 0.54);
+  box-shadow:
+    0 0 0 2px rgba(212, 47, 80, 0.14),
+    0 10px 22px rgba(212, 47, 80, 0.12);
+}
+
+.ribo-mrna-base {
+  width: 18px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.ribo-mrna-base + .ribo-mrna-base {
+  border-left: 1px solid rgba(37, 99, 235, 0.1);
+}
+
+[data-theme="dark"] .ribo-mrna-thread {
+  background:
+    linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.22), transparent),
+    rgba(7, 17, 31, 0.5);
+}
+
+[data-theme="dark"] .ribo-mrna-codon,
+[data-theme="dark"] .ribo-mrna-base {
+  background: rgba(15, 39, 66, 0.58);
+}

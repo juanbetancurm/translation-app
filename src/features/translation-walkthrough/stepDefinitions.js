@@ -23,7 +23,7 @@
 //   "initTRNA"   initiator Met-tRNA enters P-site
 //   "showLarge"  60S subunit joins, Met added to polypeptide
 //   "arrive"     new charged tRNA arrives at A-site
-//   "bond"       peptide bond forms, amino acid added to chain
+//   "bond"       peptide bond forms inside the ribosome
 //   "shift"      translocation: ribosome slides one codon right
 //   "stop"       STOP codon reached, release factor enters
 //   "release"    ribosome disassembles, protein released
@@ -159,13 +159,16 @@ function buildSteps() {
 
     steps.push({
       phase: "elong",
-      title: "Peptide bond: " + aminoAcid + " added to chain",
+      title: "Peptide bond forms with " + aminoAcid,
       text:
         "The ribosome's <strong>peptidyl transferase</strong> (catalyzed " +
         "by the rRNA — making the ribosome a <em>ribozyme</em>) transfers " +
         "the growing chain from the P-site tRNA onto the A-site amino " +
-        "acid. A new <strong>peptide bond</strong> forms. The P-site " +
-        "tRNA is now empty; the A-site tRNA carries the entire polypeptide.",
+        "acid. A new <strong>peptide bond</strong> forms inside the " +
+        "ribosome. The P-site tRNA is now empty; the A-site tRNA carries " +
+        "the entire polypeptide. You will see the new amino acid emerge " +
+        "in the external chain after <strong>translocation</strong>, when " +
+        "that peptidyl-tRNA shifts into the P-site.",
       action: "bond",
       codonIndex: i,
     });

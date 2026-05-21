@@ -20,8 +20,10 @@ import {
   useState,
 } from "react";
 import MrnaStrand from "../../shared/components/MrnaStrand";
+import EmergingPolypeptide from "../../shared/components/EmergingPolypeptide";
 import PolypeptideChain from "../../shared/components/PolypeptideChain";
 import Ribosome from "../../shared/components/Ribosome";
+import RibosomeMrnaOverlay from "../../shared/components/RibosomeMrnaOverlay";
 import TrnaMolecule from "../../shared/components/TrnaMolecule";
 import PhaseBanner from "../../shared/components/PhaseBanner";
 import ReleaseFactor from "../../shared/components/ReleaseFactor";
@@ -33,6 +35,10 @@ import {
   computeCodonCenter,
   computeRibosomeLeft,
 } from "../../lib/ribosomePositioning.js";
+import {
+  RELEASE_FACTOR_HALF_WIDTH,
+  TRNA_HALF_WIDTH,
+} from "../../lib/ribosomeGeometry.js";
 import {
   initialState,
   walkthroughReducer,
@@ -163,19 +169,31 @@ export default function TranslationWalkthrough() {
               left={riboLeft}
               visible={state.riboVisible}
               largeVisible={state.riboLargeVisible}
+              largePreview={state.riboLargePreview}
               fadingOut={state.riboFading}
+            />
+
+            <RibosomeMrnaOverlay
+              codons={ORIG_CODONS}
+              codonCenters={codonCenters}
+              states={state.codonStates}
+              visible={state.riboVisible}
+            />
+
+            <EmergingPolypeptide
+              aminoAcids={state.protein}
+              ribosomeLeft={riboLeft}
+              visible={state.riboVisible && state.riboLargeVisible}
+              released={state.riboFading}
             />
 
             {state.trnas.map((trna, i) => {
               const codonCenter = codonCenters[trna.codonIndex];
               if (codonCenter == null) return null;
-              // P-site sits centered; A-site offset to the right; E-site to the left.
-              const siteOffset =
-                trna.site === "p" ? 0 : trna.site === "a" ? 56 : -56;
               return (
                 <TrnaMolecule
                   key={`${trna.site}-${trna.codonIndex}-${i}`}
-                  left={codonCenter - 14 + siteOffset}
+                  left={codonCenter - TRNA_HALF_WIDTH}
                   site={trna.site}
                   anticodon={trna.anticodon}
                   aminoAcid={trna.aminoAcid}
@@ -188,7 +206,12 @@ export default function TranslationWalkthrough() {
               const codonCenter = codonCenters[state.releaseFactor.codonIndex];
               if (codonCenter == null) return null;
               return (
-                <ReleaseFactor left={codonCenter - 18 + 56} />
+                <ReleaseFactor
+                  left={
+                    codonCenter -
+                    RELEASE_FACTOR_HALF_WIDTH
+                  }
+                />
               );
             })()}
           </div>

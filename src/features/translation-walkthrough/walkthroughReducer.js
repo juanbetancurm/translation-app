@@ -36,6 +36,7 @@ export const initialState = {
   codonStates: ORIG_CODONS.map(() => "upcoming"),
   riboVisible: false,
   riboLargeVisible: true,
+  riboLargePreview: false,
   riboFading: false,
   riboCodonIndex: 0,
   trnas: [],
@@ -103,6 +104,7 @@ function computeStateAtStep(prevState, newIndex) {
     case "showMRNA": {
       // The mRNA appears. Ribosome stays hidden.
       next.riboVisible = false;
+      next.riboLargePreview = false;
       next.lookupCodon = null;
       next.trnas = [];
       next.releaseFactor = null;
@@ -113,6 +115,7 @@ function computeStateAtStep(prevState, newIndex) {
       // 40S subunit lands on AUG. Mark codon 0 active.
       next.riboVisible = true;
       next.riboLargeVisible = false;
+      next.riboLargePreview = false;
       next.riboCodonIndex = 0;
       next.codonStates = makeStates(0, [0]);
       next.lookupCodon = "AUG";
@@ -123,6 +126,7 @@ function computeStateAtStep(prevState, newIndex) {
 
     case "initTRNA": {
       // Initiator Met-tRNA arrives at P-site.
+      next.riboLargePreview = true;
       next.trnas = [
         {
           site: "p",
@@ -139,6 +143,7 @@ function computeStateAtStep(prevState, newIndex) {
       // 60S subunit joins, Met is added to polypeptide,
       // codon 1 becomes active alongside codon 0.
       next.riboLargeVisible = true;
+      next.riboLargePreview = false;
       next.protein = ["Met"];
       next.codonStates = makeStates(0, [0, 1]);
       break;
@@ -172,18 +177,21 @@ function computeStateAtStep(prevState, newIndex) {
     }
 
     case "bond": {
-      // Peptide bond forms. The new amino acid is added to the chain.
-      const ci = step.codonIndex;
-      const aa = GC[ORIG_CODONS[ci]];
-      next.protein = [...prevState.protein, aa];
+      // Peptide bond forms inside the ribosome. We wait until
+      // translocation to show the new amino acid in the external chain,
+      // so students see it emerge only after the peptidyl-tRNA reaches P.
       break;
     }
 
     case "shift": {
       // Translocation: ribosome slides forward one codon.
       const ci = step.codonIndex;
+      const aa = GC[ORIG_CODONS[ci]];
       next.riboCodonIndex = ci;
       next.codonStates = makeStates(ci, [ci, ci + 1]);
+      if (aa && aa !== "STOP" && prevState.protein.length < ci + 1) {
+        next.protein = [...prevState.protein, aa];
+      }
       next.trnas = [
         {
           site: "p",

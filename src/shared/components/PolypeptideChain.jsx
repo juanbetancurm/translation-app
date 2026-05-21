@@ -38,9 +38,9 @@ export default function PolypeptideChain({
               <span
                 className={`aa${isWrong ? " aa-wrong" : ""}`}
                 style={{
-                  background: `${color}20`,
+                  background: `${color}55`,
                   color: color,
-                  borderColor: `${color}40`,
+                  borderColor: `${color}b8`,
                 }}
               >
                 {aa}

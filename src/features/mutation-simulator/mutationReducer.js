@@ -21,7 +21,6 @@ import { classifyMutation, MUTATION_TYPES } from "./mutationClassifier.js";
 
 const BASE_CYCLE = ["A", "U", "C", "G"];
 const ORIG_BASES = ORIG_SEQ.split("");
-const STOP_CODONS = new Set(["UAA", "UAG", "UGA"]);
 
 const initialAnimationState = {
   isPlaying: false,
@@ -183,9 +182,10 @@ function advanceAnimation(state) {
   if (animation.isFinished) return state;
 
   const codons = splitCodons(getEffectiveSequence(state.bases));
+  const steps = buildMutationAnimationSteps(codons);
   const nextStep = animation.stepIndex + 1;
 
-  if (nextStep >= codons.length) {
+  if (nextStep >= steps.length) {
     return {
       ...state,
       animation: {
@@ -196,44 +196,116 @@ function advanceAnimation(state) {
     };
   }
 
-  const currentCodon = codons[nextStep];
-
-  if (STOP_CODONS.has(currentCodon)) {
-    return {
-      ...state,
-      animation: {
-        ...animation,
-        stepIndex: nextStep,
-        riboCodonIndex: nextStep,
-        isPlaying: false,
-        isFinished: true,
-      },
-    };
-  }
-
-  const aminoAcid = GC[currentCodon];
-  if (!aminoAcid) {
-    return {
-      ...state,
-      animation: {
-        ...animation,
-        stepIndex: nextStep,
-        riboCodonIndex: nextStep,
-        isPlaying: false,
-        isFinished: true,
-      },
-    };
-  }
+  const visualStep = steps[nextStep];
+  const isRelease = visualStep.action === "release";
+  const aminoAcid =
+    visualStep.action === "showLarge" ? "Met" :
+    visualStep.action === "shift" ? GC[codons[visualStep.codonIndex]] :
+    null;
+  const nextProtein =
+    aminoAcid && animation.protein.length < visualStep.proteinLength
+      ? [...animation.protein, aminoAcid]
+      : animation.protein;
 
   return {
     ...state,
     animation: {
       ...animation,
       stepIndex: nextStep,
-      riboCodonIndex: nextStep,
-      protein: [...animation.protein, aminoAcid],
+      riboCodonIndex: visualStep.riboCodonIndex,
+      protein: nextProtein,
+      isPlaying: isRelease ? false : animation.isPlaying,
+      isFinished: isRelease,
     },
   };
+}
+
+export function buildMutationAnimationSteps(codons) {
+  if (codons.length === 0 || codons[0] !== "AUG") return [];
+
+  const steps = [
+    {
+      action: "showSmall",
+      codonIndex: 0,
+      riboCodonIndex: 0,
+      activeIndices: [0],
+      proteinLength: 0,
+    },
+    {
+      action: "initTRNA",
+      codonIndex: 0,
+      riboCodonIndex: 0,
+      activeIndices: [0],
+      proteinLength: 0,
+    },
+    {
+      action: "showLarge",
+      codonIndex: 0,
+      riboCodonIndex: 0,
+      activeIndices: [0, 1],
+      proteinLength: 1,
+    },
+  ];
+
+  for (let i = 1; i < codons.length; i++) {
+    const aminoAcid = GC[codons[i]];
+
+    if (aminoAcid === "STOP") {
+      steps.push({
+        action: "stop",
+        codonIndex: i,
+        riboCodonIndex: Math.max(0, i - 1),
+        activeIndices: [i],
+        proteinLength: steps.at(-1)?.proteinLength ?? 0,
+      });
+      steps.push({
+        action: "release",
+        codonIndex: i,
+        riboCodonIndex: Math.max(0, i - 1),
+        activeIndices: [i],
+        proteinLength: steps.at(-1)?.proteinLength ?? 0,
+      });
+      break;
+    }
+
+    if (!aminoAcid) break;
+
+    const previousProteinLength = steps.at(-1)?.proteinLength ?? 0;
+    steps.push({
+      action: "arrive",
+      codonIndex: i,
+      riboCodonIndex: i - 1,
+      activeIndices: [i - 1, i],
+      proteinLength: previousProteinLength,
+    });
+    steps.push({
+      action: "bond",
+      codonIndex: i,
+      riboCodonIndex: i - 1,
+      activeIndices: [i - 1, i],
+      proteinLength: previousProteinLength,
+    });
+    steps.push({
+      action: "shift",
+      codonIndex: i,
+      riboCodonIndex: i,
+      activeIndices: i + 1 < codons.length ? [i, i + 1] : [i],
+      proteinLength: previousProteinLength + 1,
+    });
+  }
+
+  const last = steps.at(-1);
+  if (last && last.action !== "release") {
+    steps.push({
+      action: "release",
+      codonIndex: last.codonIndex,
+      riboCodonIndex: last.riboCodonIndex,
+      activeIndices: last.activeIndices,
+      proteinLength: last.proteinLength,
+    });
+  }
+
+  return steps;
 }
 
 function isStartLost(state) {

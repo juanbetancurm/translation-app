@@ -100,7 +100,7 @@
 }
 
 .mutation-strand-with-ribo-animated {
-  padding-top: 130px;
+  padding-top: 285px;
 }
 
 .mutation-strand-with-ribo > .mrna-row {
@@ -112,7 +112,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 130px;
+  height: 285px;
   pointer-events: none;
 }
 

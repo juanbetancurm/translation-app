@@ -16,16 +16,28 @@ import AnalysisCard from "./components/AnalysisCard";
 import MutantAnimationStage from "./components/MutantAnimationStage";
 import PresetButtons from "./components/PresetButtons";
 import ProteinComparison from "./components/ProteinComparison";
+import EmergingPolypeptide from "../../shared/components/EmergingPolypeptide";
+import ReleaseFactor from "../../shared/components/ReleaseFactor";
 import Ribosome from "../../shared/components/Ribosome";
+import RibosomeMrnaOverlay from "../../shared/components/RibosomeMrnaOverlay";
 import SequenceEditor from "./components/SequenceEditor";
 import ToolPicker from "./components/ToolPicker";
 import MrnaStrand from "../../shared/components/MrnaStrand";
 import PolypeptideChain from "../../shared/components/PolypeptideChain";
+import TrnaMolecule from "../../shared/components/TrnaMolecule";
 import { GC } from "../../shared/biology/geneticCode.js";
 import { ORIG_SEQ } from "../../shared/biology/constants.js";
-import { splitCodons } from "../../shared/biology/translation.js";
-import { computeRibosomeLeft } from "../../lib/ribosomePositioning.js";
+import { ac, splitCodons } from "../../shared/biology/translation.js";
 import {
+  computeCodonCenter,
+  computeRibosomeLeft,
+} from "../../lib/ribosomePositioning.js";
+import {
+  RELEASE_FACTOR_HALF_WIDTH,
+  TRNA_HALF_WIDTH,
+} from "../../lib/ribosomeGeometry.js";
+import {
+  buildMutationAnimationSteps,
   initialMutationState,
   mutationReducer,
   getEffectiveSequence,
@@ -46,6 +58,7 @@ export default function MutationSimulator() {
     []
   );
   const [riboLeft, setRiboLeft] = useState(0);
+  const [codonCenters, setCodonCenters] = useState([]);
 
   useLayoutEffect(() => {
     function updatePosition() {
@@ -53,10 +66,20 @@ export default function MutationSimulator() {
       const codonEl = codonRefs[state.animation.riboCodonIndex]?.current;
       if (!container || !codonEl) return;
 
+      const containerRect = container.getBoundingClientRect();
+      const centers = codonRefs.map((ref) => {
+        if (!ref.current) return null;
+        return computeCodonCenter(
+          ref.current.getBoundingClientRect(),
+          containerRect
+        );
+      });
+
+      setCodonCenters(centers);
       setRiboLeft(
         computeRibosomeLeft(
           codonEl.getBoundingClientRect(),
-          container.getBoundingClientRect()
+          containerRect
         )
       );
     }
@@ -109,15 +132,25 @@ export default function MutationSimulator() {
   const effectiveSeq = getEffectiveSequence(state.bases);
   const mutantCodons = splitCodons(effectiveSeq);
   const mutantLabels = mutantCodons.map((codon) => GC[codon] || "???");
+  const animationSteps = buildMutationAnimationSteps(mutantCodons);
+  const currentAnimationStep =
+    state.animation.stepIndex >= 0
+      ? animationSteps[state.animation.stepIndex]
+      : null;
+  const activeCodonIndices = new Set(
+    currentAnimationStep?.activeIndices || []
+  );
   const animationStarted =
     state.analysis &&
     (state.animation.isPlaying ||
       state.animation.stepIndex >= 0 ||
       state.animation.isFinished);
   const mutantStates = mutantCodons.map((codon, index) => {
-    const isCurrent =
-      animationStarted && index === state.animation.riboCodonIndex;
-    const isPast = animationStarted && index < state.animation.riboCodonIndex;
+    const isCurrent = animationStarted && activeCodonIndices.has(index);
+    const isPast =
+      animationStarted &&
+      currentAnimationStep &&
+      index < Math.min(...currentAnimationStep.activeIndices);
     const isStop = STOP_CODONS.has(codon);
 
     const isLastCodon = index === mutantCodons.length - 1;
@@ -133,6 +166,24 @@ export default function MutationSimulator() {
     if (isPast) return "done";
     return "upcoming";
   });
+
+  const ribosomeVisible =
+    Boolean(state.analysis) &&
+    !isStartLost &&
+    state.animation.stepIndex >= 0;
+  const ribosomeLargeVisible =
+    ribosomeVisible &&
+    currentAnimationStep?.action !== "showSmall" &&
+    currentAnimationStep?.action !== "initTRNA";
+  const ribosomeLargePreview =
+    ribosomeVisible && currentAnimationStep?.action === "initTRNA";
+  const ribosomeFading =
+    ribosomeVisible && currentAnimationStep?.action === "release";
+  const releaseFactor =
+    currentAnimationStep?.action === "stop"
+      ? { codonIndex: currentAnimationStep.codonIndex }
+      : null;
+  const trnas = getAnimationTrnas(currentAnimationStep, mutantCodons);
 
   return (
     <div className="mutation">
@@ -160,13 +211,46 @@ export default function MutationSimulator() {
                 <div className="mutant-ribo-overlay">
                   <Ribosome
                     left={riboLeft}
-                    visible={
-                      state.animation.isPlaying ||
-                      state.animation.stepIndex >= 0
-                    }
-                    largeVisible={true}
-                    fadingOut={state.animation.isFinished}
+                    visible={ribosomeVisible}
+                    largeVisible={ribosomeLargeVisible}
+                    largePreview={ribosomeLargePreview}
+                    fadingOut={ribosomeFading}
                   />
+                  <RibosomeMrnaOverlay
+                    codons={mutantCodons}
+                    codonCenters={codonCenters}
+                    states={mutantStates}
+                    visible={ribosomeVisible}
+                  />
+                  <EmergingPolypeptide
+                    aminoAcids={state.animation.protein}
+                    ribosomeLeft={riboLeft}
+                    visible={ribosomeVisible && ribosomeLargeVisible}
+                    released={ribosomeFading}
+                  />
+                  {trnas.map((trna, index) => {
+                    const codonCenter = codonCenters[trna.codonIndex];
+                    if (codonCenter == null) return null;
+                    return (
+                      <TrnaMolecule
+                        key={`${trna.site}-${trna.codonIndex}-${index}`}
+                        left={codonCenter - TRNA_HALF_WIDTH}
+                        site={trna.site}
+                        anticodon={trna.anticodon}
+                        aminoAcid={trna.aminoAcid}
+                        entering={trna.entering}
+                      />
+                    );
+                  })}
+                  {releaseFactor && (() => {
+                    const codonCenter = codonCenters[releaseFactor.codonIndex];
+                    if (codonCenter == null) return null;
+                    return (
+                      <ReleaseFactor
+                        left={codonCenter - RELEASE_FACTOR_HALF_WIDTH}
+                      />
+                    );
+                  })()}
                 </div>
               )}
               <MrnaStrand
@@ -258,4 +342,57 @@ export default function MutationSimulator() {
       </aside>
     </div>
   );
+}
+
+function getAnimationTrnas(step, codons) {
+  if (!step) return [];
+
+  switch (step.action) {
+    case "initTRNA":
+    case "showLarge":
+      return [
+        {
+          site: "p",
+          codonIndex: 0,
+          anticodon: ac(codons[0]),
+          aminoAcid: "Met",
+          entering: step.action === "initTRNA",
+        },
+      ];
+
+    case "arrive":
+    case "bond": {
+      const codon = codons[step.codonIndex];
+      return [
+        {
+          site: "p",
+          codonIndex: step.codonIndex - 1,
+          anticodon: ac(codons[step.codonIndex - 1]),
+          aminoAcid: null,
+          entering: false,
+        },
+        {
+          site: "a",
+          codonIndex: step.codonIndex,
+          anticodon: ac(codon),
+          aminoAcid: GC[codon],
+          entering: step.action === "arrive",
+        },
+      ];
+    }
+
+    case "shift":
+      return [
+        {
+          site: "p",
+          codonIndex: step.codonIndex,
+          anticodon: ac(codons[step.codonIndex]),
+          aminoAcid: null,
+          entering: false,
+        },
+      ];
+
+    default:
+      return [];
+  }
 }

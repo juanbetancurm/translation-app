@@ -60,21 +60,21 @@
 
 /* Inside the wrapper, the ribozone is absolutely positioned so it
  * floats above the strand and shares its horizontal alignment.
- * The 210px height matches the original .ribo-zone height and reserves
+ * The 285px height matches the sprite ribosome zone and reserves
  * vertical space above the strand for the ribosome sprite. */
 .strand-with-ribo > .ribo-zone {
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
-  height: 210px;
+  height: 285px;
   /* The strand will be pushed down below this height because of the
    * margin-top below — see .strand-with-ribo > .mrna-row. */
 }
 
 /* Push the strand down by the ribozone's height so they don't overlap. */
 .strand-with-ribo > .mrna-row {
-  margin-top: 210px;
+  margin-top: 285px;
 }
 
 /* Sidebar section blocks */
