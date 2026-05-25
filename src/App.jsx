@@ -25,6 +25,13 @@ export default function App() {
           <span className="tab-icon" aria-hidden="true">Lab</span>
           Mutation Simulator
         </NavLink>
+        <a
+          href="https://www.labolavs.com/category/education"
+          className="tab tab-external"
+        >
+          <span className="tab-icon" aria-hidden="true">Edu</span>
+          Education
+        </a>
       </nav>
 
       <Routes>

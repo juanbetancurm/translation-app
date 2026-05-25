@@ -18,6 +18,8 @@
   border-bottom: 1px solid var(--bd);
   height: 49px;
   flex-shrink: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
   box-shadow: 0 12px 32px rgba(29, 78, 216, 0.08);
 }
 
@@ -40,6 +42,7 @@
   text-decoration: none;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 }
 
 .tab:hover {
@@ -54,6 +57,22 @@
   border-color: rgba(37, 99, 235, 0.22);
   background: rgba(37, 99, 235, 0.1);
   box-shadow: 0 10px 22px rgba(29, 78, 216, 0.08);
+}
+
+.tab-external {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(37, 99, 235, 0.18);
+  box-shadow:
+    0 8px 18px rgba(29, 78, 216, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.85) inset;
+}
+
+.tab-external:hover {
+  border-color: rgba(37, 99, 235, 0.26);
+  box-shadow:
+    0 10px 22px rgba(29, 78, 216, 0.16),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
 }
 
 .tab-icon {
@@ -85,6 +104,21 @@
   box-shadow: 0 10px 22px rgba(4, 0, 12, 0.26);
 }
 
+[data-theme="dark"] .tab-external {
+  background: rgba(15, 39, 66, 0.74);
+  border-color: rgba(191, 219, 254, 0.14);
+  box-shadow:
+    0 8px 18px rgba(4, 0, 12, 0.3),
+    0 1px 0 rgba(191, 219, 254, 0.08) inset;
+}
+
+[data-theme="dark"] .tab-external:hover {
+  border-color: rgba(191, 219, 254, 0.22);
+  box-shadow:
+    0 10px 22px rgba(4, 0, 12, 0.36),
+    0 1px 0 rgba(191, 219, 254, 0.1) inset;
+}
+
 @media (max-width: 560px) {
   .tabs {
     gap: 6px;
@@ -92,10 +126,14 @@
   }
 
   .tab {
-    flex: 1;
+    flex: 0 0 auto;
     justify-content: center;
     padding: 8px 10px;
     font-size: 12px;
+  }
+
+  .tab-external {
+    margin-left: 0;
   }
 }
 
