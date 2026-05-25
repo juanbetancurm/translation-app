@@ -1,5 +1,6 @@
 .trna {
   position: absolute;
+  width: calc(28px * var(--scene-scale, 1));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,26 +9,32 @@
 }
 
 .trna-aa {
-  padding: 4px 9px;
+  padding:
+    calc(4px * var(--scene-scale, 1))
+    calc(9px * var(--scene-scale, 1));
   border-radius: var(--craft-radius-pill);
-  font-size: 11px;
+  font-size: calc(11px * var(--scene-scale, 1));
   font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: calc(4px * var(--scene-scale, 1));
   white-space: nowrap;
   box-shadow: 0 8px 18px rgba(29, 78, 216, 0.08);
 }
 
 .trna-stem {
-  width: 3px;
-  height: 24px;
+  width: calc(3px * var(--scene-scale, 1));
+  height: calc(24px * var(--scene-scale, 1));
   border-radius: 2px;
   box-shadow: 0 8px 18px rgba(29, 78, 216, 0.08);
 }
 
 .trna-head {
-  width: 28px;
-  height: 16px;
-  border-radius: 0 0 10px 10px;
+  width: calc(28px * var(--scene-scale, 1));
+  height: calc(16px * var(--scene-scale, 1));
+  border-radius:
+    0
+    0
+    calc(10px * var(--scene-scale, 1))
+    calc(10px * var(--scene-scale, 1));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,7 +43,7 @@
 
 .trna-ac {
   font-family: var(--mono);
-  font-size: 8px;
+  font-size: calc(8px * var(--scene-scale, 1));
   font-weight: 700;
   color: #ffffff;
 }

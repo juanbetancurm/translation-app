@@ -7,22 +7,24 @@ import { AA_COL } from "../biology/geneticCode.js";
 import { PEPTIDE_EXIT_OFFSET } from "../../lib/ribosomeGeometry.js";
 import "./EmergingPolypeptide.css";
 
-function pointFor(indexFromEnd) {
-  const x = -indexFromEnd * 34;
-  const y = -Math.sin(indexFromEnd * 0.88) * 18 - indexFromEnd * 3;
+function pointFor(indexFromEnd, scale) {
+  const x = -indexFromEnd * 34 * scale;
+  const y =
+    -Math.sin(indexFromEnd * 0.88) * 18 * scale -
+    indexFromEnd * 3 * scale;
   return { x, y };
 }
 
-function bondBetween(from, to) {
+function bondBetween(from, to, scale) {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const length = Math.hypot(dx, dy);
   const angle = Math.atan2(dy, dx) * (180 / Math.PI);
 
   return {
-    left: `${from.x + 14}px`,
-    top: `${from.y + 12}px`,
-    width: `${Math.max(0, length - 28)}px`,
+    left: `${from.x + 14 * scale}px`,
+    top: `${from.y + 12 * scale}px`,
+    width: `${Math.max(0, length - 28 * scale)}px`,
     transform: `rotate(${angle}deg)`,
   };
 }
@@ -32,19 +34,21 @@ export default function EmergingPolypeptide({
   ribosomeLeft,
   visible = true,
   released = false,
+  sceneScale = 1,
 }) {
   if (!visible || aminoAcids.length === 0) return null;
 
+  const scale = Number.isFinite(sceneScale) ? sceneScale : 1;
   const points = aminoAcids.map((_, i) =>
-    pointFor(aminoAcids.length - 1 - i)
+    pointFor(aminoAcids.length - 1 - i, scale)
   );
 
   return (
     <div
       className={`emerging-peptide${released ? " emerging-peptide-released" : ""}`}
       style={{
-        left: `${ribosomeLeft + PEPTIDE_EXIT_OFFSET.x}px`,
-        top: `${PEPTIDE_EXIT_OFFSET.y}px`,
+        left: `${ribosomeLeft + PEPTIDE_EXIT_OFFSET.x * scale}px`,
+        top: `${PEPTIDE_EXIT_OFFSET.y * scale}px`,
       }}
       aria-label="Growing polypeptide emerging from ribosome"
     >
@@ -52,7 +56,7 @@ export default function EmergingPolypeptide({
         <span
           key={`bond-${i}`}
           className="emerging-bond"
-          style={bondBetween(points[i], point)}
+          style={bondBetween(points[i], point, scale)}
           aria-hidden="true"
         />
       ))}

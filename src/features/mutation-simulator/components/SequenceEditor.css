@@ -1,22 +1,26 @@
 .mut-mrna {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: repeat(9, 38px);
+  column-gap: 4px;
+  row-gap: 18px;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 0 4px;
+  padding-top: 12px;
 }
 
 .mut-base {
-  width: 30px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--mono);
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(238, 245, 255, 0.92));
   border: 1.5px solid var(--bd);
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   transition:
     background var(--craft-transition),
@@ -26,13 +30,14 @@
     opacity var(--craft-transition);
   position: relative;
   padding: 0;
+  overflow: visible;
   box-shadow: 0 8px 18px rgba(29, 78, 216, 0.06);
 }
 
 .mut-base:hover {
   border-color: var(--ac);
   background: rgba(37, 99, 235, 0.1);
-  transform: scale(1.08);
+  transform: scale(1.06);
 }
 
 .mut-base-A { color: var(--base-a); }
@@ -65,16 +70,24 @@
 
 .mut-base .pos {
   position: absolute;
-  top: -10px;
+  top: -12px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 7px;
+  font-size: 8px;
+  line-height: 1;
   color: var(--tx3);
-  font-weight: 400;
+  font-weight: 500;
 }
 
-.mut-base:nth-child(3n + 1) {
-  margin-left: 4px;
+@media (max-width: 520px) {
+  .mut-mrna {
+    grid-template-columns: repeat(8, 36px);
+  }
+
+  .mut-base {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 [data-theme="dark"] .mut-base {

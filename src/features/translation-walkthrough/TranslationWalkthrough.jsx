@@ -36,7 +36,10 @@ import {
   computeRibosomeLeft,
 } from "../../lib/ribosomePositioning.js";
 import {
+  RELEASE_FACTOR_BOTTOM,
   RELEASE_FACTOR_HALF_WIDTH,
+  RIBOSOME_WIDTH,
+  TRNA_BOTTOM,
   TRNA_HALF_WIDTH,
 } from "../../lib/ribosomeGeometry.js";
 import {
@@ -51,6 +54,13 @@ import "./TranslationWalkthrough.css";
 
 const STRAND_ID = "walkthrough-strand";
 
+function readSceneScale(element) {
+  const scale = Number.parseFloat(
+    getComputedStyle(element).getPropertyValue("--scene-scale")
+  );
+  return Number.isFinite(scale) && scale > 0 ? scale : 1;
+}
+
 export default function TranslationWalkthrough() {
   // ── Reducer-managed state ────────────────────────────────────────
   const [state, dispatch] = useReducer(walkthroughReducer, initialState);
@@ -61,6 +71,7 @@ export default function TranslationWalkthrough() {
   // reducer is pure (cannot touch the DOM).
   const [riboLeft, setRiboLeft] = useState(0);
   const [codonCenters, setCodonCenters] = useState([]);
+  const [sceneScale, setSceneScale] = useState(1);
   const [isAutoRunning, setIsAutoRunning] = useState(false);
   const [speed, setSpeed] = useState(1200);
 
@@ -85,6 +96,7 @@ export default function TranslationWalkthrough() {
       if (!container || !codonEl) return;
 
       const containerRect = container.getBoundingClientRect();
+      const scale = readSceneScale(container);
       const centers = codonRefs.map((ref) => {
         if (!ref.current) return null;
         return computeCodonCenter(
@@ -93,9 +105,16 @@ export default function TranslationWalkthrough() {
         );
       });
 
+      setSceneScale((currentScale) =>
+        Math.abs(currentScale - scale) < 0.01 ? currentScale : scale
+      );
       setCodonCenters(centers);
       setRiboLeft(
-        computeRibosomeLeft(codonEl.getBoundingClientRect(), containerRect)
+        computeRibosomeLeft(
+          codonEl.getBoundingClientRect(),
+          containerRect,
+          RIBOSOME_WIDTH * scale
+        )
       );
     }
 
@@ -185,6 +204,7 @@ export default function TranslationWalkthrough() {
               ribosomeLeft={riboLeft}
               visible={state.riboVisible && state.riboLargeVisible}
               released={state.riboFading}
+              sceneScale={sceneScale}
             />
 
             {state.trnas.map((trna, i) => {
@@ -193,7 +213,8 @@ export default function TranslationWalkthrough() {
               return (
                 <TrnaMolecule
                   key={`${trna.site}-${trna.codonIndex}-${i}`}
-                  left={codonCenter - TRNA_HALF_WIDTH}
+                  left={codonCenter - TRNA_HALF_WIDTH * sceneScale}
+                  bottom={TRNA_BOTTOM * sceneScale}
                   site={trna.site}
                   anticodon={trna.anticodon}
                   aminoAcid={trna.aminoAcid}
@@ -209,8 +230,9 @@ export default function TranslationWalkthrough() {
                 <ReleaseFactor
                   left={
                     codonCenter -
-                    RELEASE_FACTOR_HALF_WIDTH
+                    RELEASE_FACTOR_HALF_WIDTH * sceneScale
                   }
+                  bottom={RELEASE_FACTOR_BOTTOM * sceneScale}
                 />
               );
             })()}
@@ -230,12 +252,14 @@ export default function TranslationWalkthrough() {
       </div>
 
       <aside className="walkthrough-side">
-        <StepExplanation
-          stepIndex={state.stepIndex}
-          stepTitle={state.stepTitle}
-          stepText={state.stepText}
-          lookupCodon={state.lookupCodon}
-        />
+        <div className="walkthrough-side-scroll">
+          <StepExplanation
+            stepIndex={state.stepIndex}
+            stepTitle={state.stepTitle}
+            stepText={state.stepText}
+            lookupCodon={state.lookupCodon}
+          />
+        </div>
         <ControlBar
           onNext={handleNext}
           onToggleAuto={handleToggleAuto}

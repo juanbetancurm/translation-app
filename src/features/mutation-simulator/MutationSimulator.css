@@ -1,11 +1,13 @@
-
 .mutation {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(460px, 33vw, 650px);
   height: calc(100vh - 49px);
+  height: calc(100dvh - 49px);
+  min-height: 0;
 }
 
 .mutation-main {
-  flex: 1;
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -15,8 +17,8 @@
 }
 
 .mutation-side {
-  width: 360px;
-  min-width: 320px;
+  min-width: 0;
+  min-height: 0;
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.98),
@@ -25,82 +27,150 @@
   border-left: 1px solid var(--bd);
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
   box-shadow: -12px 0 32px rgba(29, 78, 216, 0.08);
 }
 
+.mutation-side-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .mutation .stage {
-  padding: 20px;
-  justify-content: flex-start;
-  overflow: auto;
+  --scene-scale: 1;
+
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   width: 100%;
+  padding:
+    clamp(4px, 0.65vw, 10px)
+    clamp(8px, 1vw, 18px)
+    clamp(6px, 0.75vw, 12px);
+  justify-content: flex-start;
+  align-items: center;
+  overflow: auto;
   box-sizing: border-box;
-  gap: 12px;
+  gap: clamp(3px, 0.45vw, 7px);
   min-height: 0;
   background:
     radial-gradient(circle at top right, rgba(37, 99, 235, 0.07), transparent 34%),
     var(--bg);
 }
 
-.mut-panel {
-  padding: 18px 20px;
+@container (min-width: 760px) {
+  .mutation .stage {
+    --scene-scale: 1.08;
+  }
 }
 
-.mut-panel h3 {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ac);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
+@container (min-width: 980px) {
+  .mutation .stage {
+    --scene-scale: 1.18;
+  }
 }
 
-.mut-instructions {
-  font-size: 12px;
-  color: var(--tx2);
-  line-height: 1.6;
-  margin-bottom: 12px;
+@container (min-width: 1180px) {
+  .mutation .stage {
+    --scene-scale: 1.27;
+  }
 }
 
-.mut-stage-note {
-  color: var(--tx3);
-  font-size: 12px;
-}
-
-.mut-actions {
+.mutation-result-band {
   display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(3px * var(--scene-scale));
+  flex-shrink: 0;
+  width: 100%;
+  max-width: min(100%, calc(760px * var(--scene-scale)));
 }
 
-.mut-animation-panel {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--bd);
+.mutation-result-band .analysis-card {
+  width: 100%;
+  max-width: none;
+  margin-bottom: 0;
+  padding:
+    clamp(5px, 0.42vw, 7px)
+    clamp(12px, 1vw, 16px);
+  border-radius: clamp(12px, 1vw, 16px);
+  box-shadow: 0 10px 24px rgba(29, 78, 216, 0.08);
 }
 
-.mut-animation-panel h3 {
-  margin-bottom: 8px;
+.mutation-result-band .analysis-row {
+  gap: 10px;
+  margin-bottom: 2px;
+}
+
+.mutation-result-band .analysis-type {
+  font-size: clamp(15px, 0.95vw, 18px);
+  line-height: 1.15;
+}
+
+.mutation-result-band .impact-tag {
+  font-size: 9px;
+  padding: 3px 9px;
+}
+
+.mutation-result-band .analysis-explanation {
+  font-size: clamp(12px, 0.8vw, 14px);
+  line-height: 1.2;
+}
+
+.mutation-result-band .protein-compare {
+  align-items: flex-start;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  gap: calc(4px * var(--scene-scale));
+}
+
+.mutation-result-band .protein-row {
+  display: grid;
+  grid-template-columns: calc(90px * var(--scene-scale)) minmax(0, 1fr);
+  align-items: center;
+  gap: calc(8px * var(--scene-scale));
+}
+
+.mutation-result-band .protein-label {
+  width: auto;
+  text-align: right;
+  font-size: calc(10px * var(--scene-scale));
+}
+
+.mutation-result-band .protein-beads {
+  gap: calc(4px * var(--scene-scale));
+}
+
+.mutation-result-band .bead,
+.mutation-result-band .protein-empty-message {
+  padding:
+    calc(3px * var(--scene-scale))
+    calc(9px * var(--scene-scale));
+  min-width: calc(31px * var(--scene-scale));
+  min-height: calc(25px * var(--scene-scale));
+  font-size: calc(10px * var(--scene-scale));
 }
 
 .mut-strand-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  max-width: 720px;
-  width: 100%;
+  gap: calc(5px * var(--scene-scale));
   position: relative;
+  flex-shrink: 0;
+  width: 100%;
+  max-width: min(100%, calc(760px * var(--scene-scale)));
 }
 
 .mutation-strand-with-ribo {
   position: relative;
   width: 100%;
-  max-width: 720px;
+  max-width: none;
 }
 
 .mutation-strand-with-ribo-animated {
-  padding-top: 285px;
+  padding-top: calc(244px * var(--scene-scale));
 }
 
 .mutation-strand-with-ribo > .mrna-row {
@@ -112,57 +182,146 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 285px;
+  height: calc(244px * var(--scene-scale));
   pointer-events: none;
-}
-
-.mut-no-protein {
-  width: 100%;
-  max-width: 680px;
-  margin-top: 10px;
-}
-
-.mut-no-protein-msg {
-  display: inline-flex;
-  align-items: center;
-  min-height: 28px;
-  padding: 4px 10px;
-  border: 1px dashed rgba(245, 107, 129, 0.45);
-  border-radius: var(--craft-radius-pill);
-  color: var(--co);
-  background: rgba(245, 107, 129, 0.08);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 700;
 }
 
 .mut-strand-wrapper .mrna-row {
   width: 100%;
+  max-width: none;
+}
+
+.mutation .mrna-lbl {
+  font-size: calc(10px * var(--scene-scale));
+  margin-bottom: calc(4px * var(--scene-scale));
+}
+
+.mutation .mrna {
+  justify-content: center;
+  gap: calc(2px * var(--scene-scale));
+  padding: calc(8px * var(--scene-scale));
+  border-radius: calc(20px * var(--scene-scale));
+}
+
+.mutation .cdn-bases {
+  border-radius: calc(11px * var(--scene-scale));
+  border-width: calc(1.5px * var(--scene-scale));
+}
+
+.mutation .b {
+  width: calc(25px * var(--scene-scale));
+  height: calc(29px * var(--scene-scale));
+  font-size: calc(12px * var(--scene-scale));
+}
+
+.mutation .cdn-lbl {
+  font-size: calc(8.5px * var(--scene-scale));
+  margin-top: calc(2px * var(--scene-scale));
+  height: calc(12px * var(--scene-scale));
+}
+
+.mut-panel,
+.mut-animation-panel,
+.mut-presets-panel {
+  padding:
+    clamp(6px, 0.58vw, 11px)
+    clamp(24px, 1.8vw, 34px);
+}
+
+.mut-panel {
+  border-bottom: 1px solid var(--bd);
+}
+
+.mut-animation-panel {
+  border-bottom: 1px solid var(--bd);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(242, 247, 255, 0.78));
+}
+
+.mut-panel h3,
+.mut-animation-panel h3 {
+  font-size: clamp(13px, 0.82vw, 16px);
+  font-weight: 700;
+  color: var(--ac);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0 0 clamp(3px, 0.3vw, 6px);
+}
+
+.mut-instructions {
+  font-size: clamp(14px, 0.9vw, 16px);
+  color: var(--tx2);
+  line-height: 1.25;
+  margin-bottom: clamp(6px, 0.5vw, 9px);
+}
+
+.mut-stage-note {
+  color: var(--tx3);
+  font-size: 12px;
+}
+
+.mut-actions {
+  display: flex;
+  gap: clamp(10px, 0.85vw, 14px);
+  margin-top: clamp(6px, 0.5vw, 9px);
+  flex-wrap: wrap;
+}
+
+.mut-actions .btn {
+  min-height: clamp(44px, 2.35vw, 50px);
+  padding:
+    clamp(10px, 0.8vw, 13px)
+    clamp(18px, 1.2vw, 24px);
+  font-size: clamp(13px, 0.78vw, 15px);
 }
 
 @media (max-width: 900px) {
   .mutation {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 60%) minmax(0, 40%);
   }
+
   .mutation-side {
     width: 100%;
-    min-width: unset;
     border-left: none;
     border-top: 1px solid var(--bd);
-    max-height: 45vh;
     box-shadow: 0 -12px 32px rgba(29, 78, 216, 0.08);
   }
-  .mutation-main {
-    min-height: 55vh;
+
+  .mutation .stage {
+    --scene-scale: 0.86;
+
+    padding: 10px;
+  }
+}
+
+@media (max-width: 560px) {
+  .mutation {
+    grid-template-rows: minmax(0, 58%) minmax(0, 42%);
+  }
+
+  .mutation .stage {
+    --scene-scale: 0.76;
+  }
+
+  .mutation-result-band .protein-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .mutation-result-band .protein-label {
+    text-align: left;
   }
 }
 
 @media (max-width: 520px) {
-  .mutation .stage {
-    padding: 16px;
+  .mutation {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .mut-panel {
+  .mut-panel,
+  .mut-animation-panel,
+  .mut-presets-panel {
     padding: 16px;
   }
 }
@@ -180,4 +339,9 @@
   background:
     radial-gradient(circle at top right, rgba(96, 165, 250, 0.1), transparent 34%),
     var(--bg);
+}
+
+[data-theme="dark"] .mut-animation-panel {
+  background:
+    linear-gradient(180deg, rgba(12, 30, 53, 0.94), rgba(8, 20, 36, 0.82));
 }

@@ -8,6 +8,8 @@ export default function ProteinComparison({
   originalProtein,
   mutantProtein,
   diffPositions,
+  mutantProgress = mutantProtein.length,
+  showProgress = false,
 }) {
   const diffSet = new Set(diffPositions);
   const maxLen = Math.max(originalProtein.length, mutantProtein.length);
@@ -34,16 +36,24 @@ export default function ProteinComparison({
       <div className="protein-row">
         <div className="protein-label">Mutant:</div>
         <div className="protein-beads">
-          {mutRow.map((aa, i) => (
-            <span
-              key={i}
-              className={`bead bead-${aa || "empty"}${
-                diffSet.has(i) ? " bead-diff" : ""
-              }`}
-            >
-              {aa || "-"}
-            </span>
-          ))}
+          {mutantProtein.length === 0 ? (
+            <span className="protein-empty-message">No protein produced</span>
+          ) : (
+            mutRow.map((aa, i) => (
+              <span
+                key={i}
+                className={`bead bead-${aa || "empty"}${
+                  diffSet.has(i) ? " bead-diff" : ""
+                }${
+                  showProgress && aa && i >= mutantProgress
+                    ? " bead-pending"
+                    : ""
+                }`}
+              >
+                {aa || "-"}
+              </span>
+            ))
+          )}
         </div>
       </div>
     </div>

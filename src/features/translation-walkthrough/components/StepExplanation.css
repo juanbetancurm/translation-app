@@ -26,19 +26,21 @@
 .lookup {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(242, 247, 255, 0.78));
-  border-radius: 16px;
-  padding: 12px;
+  border-radius: clamp(14px, 1vw, 18px);
+  padding: clamp(14px, 1.2vw, 22px);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: clamp(14px, 0.95vw, 18px);
   border: 1px solid var(--bd);
-  margin-top: 8px;
+  margin-top: clamp(10px, 1vw, 18px);
   box-shadow: var(--craft-shadow-sm);
 }
 
 .lookup-row {
   display: flex;
   justify-content: space-between;
+  gap: 16px;
   padding: 2px 0;
+  min-width: 0;
 }
 
 .lookup-codon {
@@ -56,7 +58,7 @@
 
 .lookup-anticodon {
   color: var(--tx3);
-  font-size: 11px;
+  font-size: clamp(13px, 0.85vw, 16px);
 }
 
 [data-theme="dark"] .lookup {

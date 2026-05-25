@@ -23,7 +23,6 @@ import RibosomeMrnaOverlay from "../../shared/components/RibosomeMrnaOverlay";
 import SequenceEditor from "./components/SequenceEditor";
 import ToolPicker from "./components/ToolPicker";
 import MrnaStrand from "../../shared/components/MrnaStrand";
-import PolypeptideChain from "../../shared/components/PolypeptideChain";
 import TrnaMolecule from "../../shared/components/TrnaMolecule";
 import { GC } from "../../shared/biology/geneticCode.js";
 import { ORIG_SEQ } from "../../shared/biology/constants.js";
@@ -33,7 +32,10 @@ import {
   computeRibosomeLeft,
 } from "../../lib/ribosomePositioning.js";
 import {
+  RELEASE_FACTOR_BOTTOM,
   RELEASE_FACTOR_HALF_WIDTH,
+  RIBOSOME_WIDTH,
+  TRNA_BOTTOM,
   TRNA_HALF_WIDTH,
 } from "../../lib/ribosomeGeometry.js";
 import {
@@ -47,6 +49,13 @@ import "./MutationSimulator.css";
 const STOP_CODONS = new Set(["UAA", "UAG", "UGA"]);
 const START_LOST_TYPE = "Start lost";
 
+function readSceneScale(element) {
+  const scale = Number.parseFloat(
+    getComputedStyle(element).getPropertyValue("--scene-scale")
+  );
+  return Number.isFinite(scale) && scale > 0 ? scale : 1;
+}
+
 export default function MutationSimulator() {
   const [state, dispatch] = useReducer(
     mutationReducer,
@@ -59,6 +68,7 @@ export default function MutationSimulator() {
   );
   const [riboLeft, setRiboLeft] = useState(0);
   const [codonCenters, setCodonCenters] = useState([]);
+  const [sceneScale, setSceneScale] = useState(1);
 
   useLayoutEffect(() => {
     function updatePosition() {
@@ -67,6 +77,7 @@ export default function MutationSimulator() {
       if (!container || !codonEl) return;
 
       const containerRect = container.getBoundingClientRect();
+      const scale = readSceneScale(container);
       const centers = codonRefs.map((ref) => {
         if (!ref.current) return null;
         return computeCodonCenter(
@@ -75,12 +86,19 @@ export default function MutationSimulator() {
         );
       });
 
+      setSceneScale((currentScale) =>
+        Math.abs(currentScale - scale) < 0.01 ? currentScale : scale
+      );
       setCodonCenters(centers);
+      const ribosomeWidth = RIBOSOME_WIDTH * scale;
+      const rawRiboLeft = computeRibosomeLeft(
+        codonEl.getBoundingClientRect(),
+        containerRect,
+        ribosomeWidth
+      );
+      const maxRiboLeft = Math.max(0, containerRect.width - ribosomeWidth);
       setRiboLeft(
-        computeRibosomeLeft(
-          codonEl.getBoundingClientRect(),
-          containerRect
-        )
+        Math.min(Math.max(rawRiboLeft, 0), maxRiboLeft)
       );
     }
 
@@ -184,26 +202,32 @@ export default function MutationSimulator() {
       ? { codonIndex: currentAnimationStep.codonIndex }
       : null;
   const trnas = getAnimationTrnas(currentAnimationStep, mutantCodons);
+  const showProteinProgress =
+    Boolean(animationStarted) &&
+    !isStartLost &&
+    state.animation.stepIndex >= 0;
 
   return (
     <div className="mutation">
       <div className="mutation-main">
         <div className="stage">
           {state.analysis && (
-            <>
+            <div className="mutation-result-band">
               <AnalysisCard analysis={state.analysis} />
               <ProteinComparison
                 originalProtein={state.analysis.originalProtein}
                 mutantProtein={state.analysis.mutantProtein}
                 diffPositions={state.analysis.diffPositions}
+                mutantProgress={state.animation.protein.length}
+                showProgress={showProteinProgress}
               />
-            </>
+            </div>
           )}
 
           <div className="mut-strand-wrapper">
             <div
               className={`mutation-strand-with-ribo${
-                state.analysis ? " mutation-strand-with-ribo-animated" : ""
+                ribosomeVisible ? " mutation-strand-with-ribo-animated" : ""
               }`}
               ref={containerRef}
             >
@@ -227,6 +251,7 @@ export default function MutationSimulator() {
                     ribosomeLeft={riboLeft}
                     visible={ribosomeVisible && ribosomeLargeVisible}
                     released={ribosomeFading}
+                    sceneScale={sceneScale}
                   />
                   {trnas.map((trna, index) => {
                     const codonCenter = codonCenters[trna.codonIndex];
@@ -234,7 +259,8 @@ export default function MutationSimulator() {
                     return (
                       <TrnaMolecule
                         key={`${trna.site}-${trna.codonIndex}-${index}`}
-                        left={codonCenter - TRNA_HALF_WIDTH}
+                        left={codonCenter - TRNA_HALF_WIDTH * sceneScale}
+                        bottom={TRNA_BOTTOM * sceneScale}
                         site={trna.site}
                         anticodon={trna.anticodon}
                         aminoAcid={trna.aminoAcid}
@@ -247,7 +273,11 @@ export default function MutationSimulator() {
                     if (codonCenter == null) return null;
                     return (
                       <ReleaseFactor
-                        left={codonCenter - RELEASE_FACTOR_HALF_WIDTH}
+                        left={
+                          codonCenter -
+                          RELEASE_FACTOR_HALF_WIDTH * sceneScale
+                        }
+                        bottom={RELEASE_FACTOR_BOTTOM * sceneScale}
                       />
                     );
                   })()}
@@ -269,57 +299,48 @@ export default function MutationSimulator() {
               strandId="original-strand"
               headerLabel="Original mRNA"
             />
-            {state.analysis && !isStartLost && (
-              <PolypeptideChain
-                aminoAcids={state.animation.protein}
-                label="Mutant protein:"
-              />
-            )}
-            {state.analysis && isStartLost && (
-              <div className="mut-no-protein">
-                <div className="pep-lbl">Mutant protein:</div>
-                <div className="mut-no-protein-msg">No protein produced</div>
-              </div>
-            )}
           </div>
         </div>
       </div>
 
       <aside className="mutation-side">
-        <div className="mut-panel">
-          <h3>Mutation Lab</h3>
-          <p className="mut-instructions">
-            Click a base to <strong>change</strong> it. Use the tools to{" "}
-            <strong>delete</strong> or <strong>insert</strong> bases. Then
-            hit <strong>Translate Mutant</strong> to analyze the altered mRNA.
-          </p>
+        <div className="mutation-side-scroll">
+          <div className="mut-panel">
+            <h3>Mutation Lab</h3>
+            <p className="mut-instructions">
+              Click a base to <strong>change</strong> it. Use the tools to{" "}
+              <strong>delete</strong> or <strong>insert</strong> bases. Then
+              hit <strong>Translate Mutant</strong> to analyze the altered
+              mRNA.
+            </p>
 
-          <ToolPicker
-            activeTool={state.tool}
-            onToolChange={handleToolChange}
-          />
+            <ToolPicker
+              activeTool={state.tool}
+              onToolChange={handleToolChange}
+            />
 
-          <SequenceEditor
-            bases={state.bases}
-            changes={state.changes}
-            onClick={handleBaseClick}
-          />
+            <SequenceEditor
+              bases={state.bases}
+              changes={state.changes}
+              onClick={handleBaseClick}
+            />
 
-          <div className="mut-actions">
-            <button
-              type="button"
-              className="btn btn-1"
-              onClick={handleStartTranslation}
-            >
-              Translate Mutant -&gt;
-            </button>
-            <button
-              type="button"
-              className="btn btn-2"
-              onClick={handleReset}
-            >
-              Reset Sequence
-            </button>
+            <div className="mut-actions">
+              <button
+                type="button"
+                className="btn btn-1"
+                onClick={handleStartTranslation}
+              >
+                Translate Mutant -&gt;
+              </button>
+              <button
+                type="button"
+                className="btn btn-2"
+                onClick={handleReset}
+              >
+                Reset Sequence
+              </button>
+            </div>
           </div>
 
           {state.analysis && (
@@ -337,7 +358,9 @@ export default function MutationSimulator() {
             </div>
           )}
 
-          <PresetButtons onApplyPreset={handleApplyPreset} />
+          <div className="mut-presets-panel">
+            <PresetButtons onApplyPreset={handleApplyPreset} />
+          </div>
         </div>
       </aside>
     </div>

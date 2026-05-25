@@ -6,24 +6,42 @@
 
 .mutant-anim-stage .controls {
   margin-top: 0;
-  padding: 12px;
+  padding: clamp(8px, 0.65vw, 11px);
+  gap: clamp(7px, 0.55vw, 10px);
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.86),
-    rgba(242, 247, 255, 0.72)
+    rgba(255, 255, 255, 0.9),
+    rgba(242, 247, 255, 0.78)
   );
   border: 1px solid var(--bd);
-  border-radius: 20px;
+  border-radius: 18px;
+  box-shadow: 0 12px 28px rgba(29, 78, 216, 0.08);
+}
+
+.mutant-anim-stage .btn {
+  min-height: clamp(38px, 2.2vw, 46px);
+  padding:
+    clamp(8px, 0.6vw, 11px)
+    clamp(16px, 1vw, 22px);
+  font-size: clamp(13px, 0.78vw, 15px);
 }
 
 .mutant-anim-stage .speed {
   width: 100%;
   margin-left: 0;
   justify-content: space-between;
+  gap: 10px;
+  font-size: clamp(12px, 0.75vw, 14px);
 }
 
 .mutant-anim-stage .speed input {
-  width: 170px;
+  width: clamp(180px, 16vw, 260px);
+}
+
+@media (max-width: 520px) {
+  .mutant-anim-stage .speed input {
+    width: min(180px, 52vw);
+  }
 }
 
 [data-theme="dark"] .mutant-anim-stage .controls {
@@ -32,4 +50,5 @@
     rgba(15, 39, 66, 0.82),
     rgba(7, 17, 31, 0.72)
   );
+  box-shadow: 0 12px 28px rgba(4, 0, 12, 0.22);
 }

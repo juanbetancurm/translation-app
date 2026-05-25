@@ -6,8 +6,12 @@
 // pixel coordinate relative to the .ribo-zone container.
 
 import "./ReleaseFactor.css";
+import { RELEASE_FACTOR_BOTTOM } from "../../lib/ribosomeGeometry.js";
 
-export default function ReleaseFactor({ left, bottom = 132 }) {
+export default function ReleaseFactor({
+  left,
+  bottom = RELEASE_FACTOR_BOTTOM,
+}) {
   return (
     <div
       className="rf"

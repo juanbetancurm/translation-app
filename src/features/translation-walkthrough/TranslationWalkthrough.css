@@ -1,27 +1,30 @@
-/* 
- *
- * The feature-level layout for the Translation Walkthrough:
- * a main panel on the left (stage), a sidebar on the right (sb-section).
- * Below 900px, layout switches to stacked (stage on top, sidebar below).
+/*
+ * Feature-level layout for the Translation Walkthrough.
+ * The stage and sidebar are sized for a classroom display first, then
+ * collapse to a stacked layout on small screens.
  */
 
 .walkthrough {
-  display: flex;
-  height: calc(100vh - 49px);  /* 49px = tab bar height */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(420px, 34vw, 700px);
+  height: calc(100vh - 49px); /* 49px = tab bar height */
+  height: calc(100dvh - 49px);
+  min-height: 0;
 }
 
 .walkthrough-main {
-  flex: 1;
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  overflow: hidden;
   position: relative;
   min-width: 0;
+  min-height: 0;
 }
 
 .walkthrough-side {
-  width: 360px;
-  min-width: 320px;
+  min-width: 0;
+  min-height: 0;
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.98),
@@ -30,91 +33,222 @@
   border-left: 1px solid var(--bd);
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
   box-shadow: -12px 0 32px rgba(29, 78, 216, 0.08);
 }
 
-.stage {
+.walkthrough-side-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.walkthrough .stage {
+  --scene-scale: 1;
+
   flex: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  gap: 8px;
+  padding: clamp(18px, 2vw, 34px);
+  gap: clamp(10px, 1.1vw, 18px);
   position: relative;
+  overflow: auto;
+  min-height: 0;
   background:
     radial-gradient(circle at top right, rgba(37, 99, 235, 0.07), transparent 34%),
     var(--bg);
 }
 
-/* The wrapper that ties the ribosome layer to the strand layer.
- * The strand sits in normal flow; the ribosome layer is absolutely
- * positioned to overlay the same horizontal space. They share
- * coordinates so getBoundingClientRect math comes out right. */
+@container (min-width: 760px) {
+  .walkthrough .stage {
+    --scene-scale: 1.12;
+  }
+}
+
+@container (min-width: 980px) {
+  .walkthrough .stage {
+    --scene-scale: 1.32;
+  }
+}
+
+@container (min-width: 1180px) {
+  .walkthrough .stage {
+    --scene-scale: 1.42;
+  }
+}
+
+/* The wrapper ties the ribosome layer to the strand layer. */
 .strand-with-ribo {
   position: relative;
   width: 100%;
-  max-width: 680px;
+  max-width: min(100%, calc(760px * var(--scene-scale)));
 }
 
-/* Inside the wrapper, the ribozone is absolutely positioned so it
- * floats above the strand and shares its horizontal alignment.
- * The 285px height matches the sprite ribosome zone and reserves
- * vertical space above the strand for the ribosome sprite. */
 .strand-with-ribo > .ribo-zone {
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
-  height: 285px;
-  /* The strand will be pushed down below this height because of the
-   * margin-top below — see .strand-with-ribo > .mrna-row. */
+  height: calc(285px * var(--scene-scale));
 }
 
-/* Push the strand down by the ribozone's height so they don't overlap. */
 .strand-with-ribo > .mrna-row {
-  margin-top: 285px;
+  margin-top: calc(285px * var(--scene-scale));
+  max-width: none;
+}
+
+.walkthrough .mrna-row,
+.walkthrough .pep-area {
+  max-width: min(100%, calc(760px * var(--scene-scale)));
+}
+
+.walkthrough .mrna-lbl {
+  font-size: calc(10px * var(--scene-scale));
+  margin-bottom: calc(6px * var(--scene-scale));
+}
+
+.walkthrough .mrna {
+  justify-content: center;
+  gap: calc(2px * var(--scene-scale));
+  padding: calc(10px * var(--scene-scale));
+  border-radius: calc(22px * var(--scene-scale));
+}
+
+.walkthrough .cdn-bases {
+  border-radius: calc(12px * var(--scene-scale));
+  border-width: calc(1.5px * var(--scene-scale));
+}
+
+.walkthrough .b {
+  width: calc(26px * var(--scene-scale));
+  height: calc(30px * var(--scene-scale));
+  font-size: calc(13px * var(--scene-scale));
+}
+
+.walkthrough .cdn-lbl {
+  font-size: calc(9px * var(--scene-scale));
+  margin-top: calc(2px * var(--scene-scale));
+  height: calc(13px * var(--scene-scale));
+}
+
+.walkthrough .pep-area {
+  margin-top: calc(10px * var(--scene-scale));
+}
+
+.walkthrough .pep-lbl {
+  font-size: calc(11px * var(--scene-scale));
+  margin-bottom: calc(6px * var(--scene-scale));
+}
+
+.walkthrough .pep {
+  gap: calc(4px * var(--scene-scale));
+  min-height: calc(28px * var(--scene-scale));
+  padding: calc(10px * var(--scene-scale));
+  border-radius: calc(20px * var(--scene-scale));
+}
+
+.walkthrough .aa {
+  padding:
+    calc(4px * var(--scene-scale))
+    calc(10px * var(--scene-scale));
+  font-size: calc(11px * var(--scene-scale));
+}
+
+.walkthrough .pep-bond {
+  font-size: calc(9px * var(--scene-scale));
+}
+
+.walkthrough-side .controls {
+  flex-shrink: 0;
+  margin-top: 0;
+  padding: clamp(14px, 1.2vw, 22px) clamp(18px, 1.6vw, 28px);
+  gap: clamp(8px, 0.8vw, 14px);
+}
+
+.walkthrough-side .btn {
+  min-height: clamp(42px, 2.6vw, 54px);
+  padding:
+    clamp(10px, 0.75vw, 14px)
+    clamp(16px, 1.15vw, 24px);
+  font-size: clamp(13px, 0.8vw, 16px);
+}
+
+.walkthrough-side .speed {
+  gap: clamp(6px, 0.6vw, 10px);
+  font-size: clamp(12px, 0.72vw, 15px);
+}
+
+.walkthrough-side .speed input {
+  width: clamp(92px, 8vw, 150px);
 }
 
 /* Sidebar section blocks */
 .sb-section {
-  padding: 16px 20px;
+  padding:
+    clamp(18px, 1.7vw, 32px)
+    clamp(22px, 2vw, 40px);
   border-bottom: 1px solid var(--bd);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(242, 247, 255, 0.56));
 }
 
 .sb-section h3 {
-  font-size: 12px;
+  font-size: clamp(13px, 0.86vw, 18px);
   font-weight: 700;
   color: var(--ac);
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: clamp(10px, 0.85vw, 16px);
+  line-height: 1.45;
 }
 
 .sb-text {
-  font-size: 13px;
-  line-height: 1.65;
+  font-size: clamp(16px, 1.15vw, 22px);
+  line-height: 1.55;
   color: var(--tx2);
+  overflow-wrap: anywhere;
 }
 
 /* Responsive: stack on small screens */
 @media (max-width: 900px) {
   .walkthrough {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 60%) minmax(0, 40%);
   }
+
   .walkthrough-side {
     width: 100%;
-    min-width: unset;
     border-left: none;
     border-top: 1px solid var(--bd);
-    max-height: 45vh;
     box-shadow: 0 -12px 32px rgba(29, 78, 216, 0.08);
   }
-  .walkthrough-main {
-    min-height: 55vh;
+
+  .walkthrough .stage {
+    --scene-scale: 0.86;
+
+    justify-content: flex-start;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 560px) {
+  .walkthrough .stage {
+    --scene-scale: 0.78;
+  }
+}
+
+@media (max-width: 520px) {
+  .walkthrough-side .controls {
+    align-items: stretch;
+  }
+
+  .walkthrough-side .speed {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
   }
 }
 
@@ -127,7 +261,7 @@
   box-shadow: -12px 0 32px rgba(4, 0, 12, 0.34);
 }
 
-[data-theme="dark"] .stage {
+[data-theme="dark"] .walkthrough .stage {
   background:
     radial-gradient(circle at top right, rgba(96, 165, 250, 0.1), transparent 34%),
     var(--bg);

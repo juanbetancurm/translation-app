@@ -15,16 +15,16 @@
 
 .emerging-aa {
   position: absolute;
-  min-width: 32px;
-  height: 26px;
-  padding: 0 8px;
+  min-width: calc(32px * var(--scene-scale, 1));
+  height: calc(26px * var(--scene-scale, 1));
+  padding: 0 calc(8px * var(--scene-scale, 1));
   border: 1px solid transparent;
   border-radius: var(--craft-radius-pill);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: calc(10px * var(--scene-scale, 1));
   font-weight: 800;
   line-height: 1;
   white-space: nowrap;
@@ -36,7 +36,7 @@
 
 .emerging-bond {
   position: absolute;
-  height: 2px;
+  height: calc(2px * var(--scene-scale, 1));
   border-radius: 999px;
   background: rgba(95, 132, 191, 0.42);
   transform-origin: left center;

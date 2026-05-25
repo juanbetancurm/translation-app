@@ -16,7 +16,7 @@
 // (produced by getBoundingClientRect) and returns a number. That keeps
 // the math pure and isolated from React.
 
-import { RIBOSOME_HALF_WIDTH } from "./ribosomeGeometry.js";
+import { RIBOSOME_WIDTH } from "./ribosomeGeometry.js";
 
 export function computeCodonCenter(codonRect, containerRect) {
   if (!codonRect || !containerRect) return null;
@@ -25,9 +25,13 @@ export function computeCodonCenter(codonRect, containerRect) {
   return codonLeftRelative + codonRect.width / 2;
 }
 
-export function computeRibosomeLeft(codonRect, containerRect) {
+export function computeRibosomeLeft(
+  codonRect,
+  containerRect,
+  ribosomeWidth = RIBOSOME_WIDTH
+) {
   if (!codonRect || !containerRect) return 0;
 
   const codonCenter = computeCodonCenter(codonRect, containerRect);
-  return codonCenter - RIBOSOME_HALF_WIDTH;
+  return codonCenter - ribosomeWidth / 2;
 }

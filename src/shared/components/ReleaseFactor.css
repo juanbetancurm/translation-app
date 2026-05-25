@@ -10,28 +10,28 @@
 }
 
 .rf-body {
-  width: 36px;
-  height: 36px;
+  width: calc(36px * var(--scene-scale, 1));
+  height: calc(36px * var(--scene-scale, 1));
   border-radius: 50%;
   background:
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.28), transparent 42%),
     var(--co2);
-  border: 2px solid var(--co);
+  border: calc(2px * var(--scene-scale, 1)) solid var(--co);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
+  font-size: calc(9px * var(--scene-scale, 1));
   font-weight: 700;
   color: #fff;
   box-shadow: 0 10px 22px rgba(212, 47, 80, 0.18);
 }
 
 .rf-stem {
-  width: 3px;
-  height: 20px;
+  width: calc(3px * var(--scene-scale, 1));
+  height: calc(20px * var(--scene-scale, 1));
   background: var(--co);
   border-radius: 2px;
-  margin-top: 2px;
+  margin-top: calc(2px * var(--scene-scale, 1));
   box-shadow: 0 8px 18px rgba(212, 47, 80, 0.14);
 }
 

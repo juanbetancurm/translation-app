@@ -1,18 +1,18 @@
 .tool-picker {
   display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 6px;
   flex-wrap: wrap;
 }
 
 .mut-btn {
-  min-height: 34px;
-  padding: 7px 12px;
+  min-height: 40px;
+  padding: 9px 15px;
   border-radius: var(--craft-radius-pill);
   border: 1px solid var(--bd);
   background: rgba(216, 231, 255, 0.5);
   color: var(--tx2);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   font-family: var(--sans);

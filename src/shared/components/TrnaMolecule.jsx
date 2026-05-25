@@ -19,6 +19,7 @@
 //   entering    if true, plays the fly-in entrance animation
 
 import { AA_COL } from "../biology/geneticCode.js";
+import { TRNA_BOTTOM } from "../../lib/ribosomeGeometry.js";
 import "./TrnaMolecule.css";
 
 const SITE_COLORS = {
@@ -29,7 +30,7 @@ const SITE_COLORS = {
 
 export default function TrnaMolecule({
   left,
-  bottom = 130,
+  bottom = TRNA_BOTTOM,
   site,
   anticodon,
   aminoAcid,
