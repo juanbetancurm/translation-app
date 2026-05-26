@@ -15,6 +15,7 @@ export default function MutantAnimationStage({
   onSpeedChange,
   onTick,
   disabled = false,
+  guideTargets = {},
 }) {
   useAutoPlay({
     isRunning: animation.isPlaying && !disabled,
@@ -42,6 +43,7 @@ export default function MutantAnimationStage({
         nextDisabled={disabled || animation.isFinished || animation.isPlaying}
         autoDisabled={disabled}
         speed={animation.speed}
+        guideTargets={guideTargets}
       />
     </div>
   );

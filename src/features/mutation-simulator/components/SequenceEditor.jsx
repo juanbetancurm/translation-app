@@ -5,18 +5,28 @@
 
 import "./SequenceEditor.css";
 
-export default function SequenceEditor({ bases, changes, onClick }) {
+export default function SequenceEditor({
+  bases,
+  changes,
+  onClick,
+  highlightCodonIndex = null,
+  dataGuide,
+}) {
   return (
-    <div className="mut-mrna">
+    <div className="mut-mrna" data-guide={dataGuide}>
       {bases.map((base, i) => {
         const change = changes.get(i);
         const isCodonStart = i % 3 === 0;
         const codonNumber = i / 3 + 1;
+        const isHighlightedCodon =
+          highlightCodonIndex != null &&
+          Math.floor(i / 3) === highlightCodonIndex;
 
         let className = `mut-base mut-base-${base}`;
         if (change?.type === "change") className += " mut-base-changed";
         if (change?.type === "insert") className += " mut-base-inserted";
         if (change?.type === "delete") className += " mut-base-deleted";
+        if (isHighlightedCodon) className += " mut-base-guide-codon";
 
         return (
           <button

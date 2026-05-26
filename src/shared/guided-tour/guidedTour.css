@@ -1,0 +1,211 @@
+.guided-tour-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.guided-tour-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 38, 0.18);
+  pointer-events: auto;
+}
+
+.guided-tour-ring {
+  position: fixed;
+  border: 3px solid var(--ac);
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 6px rgba(37, 99, 235, 0.16),
+    0 16px 42px rgba(29, 78, 216, 0.28);
+  pointer-events: none;
+  z-index: 10000;
+  transition:
+    left 160ms ease,
+    top 160ms ease,
+    width 160ms ease,
+    height 160ms ease;
+}
+
+.guided-tour-message {
+  position: fixed;
+  width: min(340px, calc(100vw - 32px));
+  background: var(--bg2);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  color: var(--tx);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 24px 70px rgba(10, 20, 38, 0.24);
+  z-index: 10001;
+  pointer-events: auto;
+}
+
+.guided-tour-message::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: var(--bg2);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  transform: rotate(45deg);
+  z-index: -1;
+}
+
+.guided-tour-message.arrow-top::after {
+  top: -10px;
+  left: var(--arrow-left, 50%);
+  margin-left: -10px;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.guided-tour-message.arrow-bottom::after {
+  bottom: -10px;
+  left: var(--arrow-left, 50%);
+  margin-left: -10px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.guided-tour-message.arrow-left::after {
+  left: -10px;
+  top: var(--arrow-top, 50%);
+  margin-top: -10px;
+  border-top: 0;
+  border-right: 0;
+}
+
+.guided-tour-message.arrow-right::after {
+  right: -10px;
+  top: var(--arrow-top, 50%);
+  margin-top: -10px;
+  border-left: 0;
+  border-bottom: 0;
+}
+
+.guided-tour-kicker {
+  color: var(--tx3);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  margin-bottom: 7px;
+  text-transform: uppercase;
+}
+
+.guided-tour-message h2 {
+  color: var(--tx);
+  font-size: 18px;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+
+.guided-tour-message p {
+  color: var(--tx2);
+  font-size: 14px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.guided-tour-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+.guided-tour-btn {
+  min-height: 38px;
+  border: 1px solid transparent;
+  border-radius: var(--craft-radius-pill);
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 8px 14px;
+  transition:
+    background var(--craft-transition),
+    border-color var(--craft-transition),
+    box-shadow var(--craft-transition),
+    color var(--craft-transition),
+    transform var(--craft-transition),
+    opacity var(--craft-transition);
+}
+
+.guided-tour-btn:disabled {
+  cursor: default;
+  opacity: 0.38;
+}
+
+.guided-tour-btn-primary {
+  background: var(--ac);
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(29, 78, 216, 0.16);
+}
+
+.guided-tour-btn-primary:hover:not(:disabled),
+.guided-tour-btn-primary:focus-visible {
+  background: var(--ac2);
+  transform: translateY(-1px);
+}
+
+.guided-tour-btn-secondary {
+  background: rgba(216, 231, 255, 0.62);
+  border-color: var(--bd);
+  color: var(--tx2);
+}
+
+.guided-tour-btn-secondary:hover:not(:disabled),
+.guided-tour-btn-secondary:focus-visible {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--tx);
+}
+
+.guided-tour-btn-ghost {
+  background: transparent;
+  color: var(--tx3);
+}
+
+.guided-tour-btn-ghost:hover,
+.guided-tour-btn-ghost:focus-visible {
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--tx);
+}
+
+.guided-tour-btn:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.28);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .guided-tour-message {
+    width: calc(100vw - 28px);
+    padding: 15px;
+  }
+
+  .guided-tour-controls {
+    align-items: stretch;
+  }
+
+  .guided-tour-btn {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guided-tour-ring,
+  .guided-tour-btn {
+    transition: none;
+  }
+}
+
+[data-theme="dark"] .guided-tour-scrim {
+  background: rgba(3, 10, 20, 0.36);
+}
+
+[data-theme="dark"] .guided-tour-message,
+[data-theme="dark"] .guided-tour-message::after {
+  background: var(--bg3);
+  border-color: rgba(96, 165, 250, 0.2);
+}

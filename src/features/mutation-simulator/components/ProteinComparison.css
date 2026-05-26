@@ -47,6 +47,12 @@
 .bead-Phe { color: var(--pu); border-color: rgba(124, 58, 237, 0.36); }
 .bead-Gly { color: var(--am); border-color: rgba(196, 138, 18, 0.38); }
 .bead-Lys { color: var(--te); border-color: rgba(15, 118, 110, 0.38); }
+.bead-STOP,
+.bead-stop {
+  background: rgba(212, 47, 80, 0.1);
+  border-color: rgba(212, 47, 80, 0.5);
+  color: var(--co);
+}
 .bead-Ala,
 .bead-Leu,
 .bead-Asn,

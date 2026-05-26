@@ -11,7 +11,7 @@ const IMPACT_CLASS = {
   Low: "impact-low",
 };
 
-export default function AnalysisCard({ analysis }) {
+export default function AnalysisCard({ analysis, dataGuide }) {
   if (!analysis) return null;
 
   const impactClass = IMPACT_CLASS[analysis.impact] || "impact-mod";
@@ -19,7 +19,7 @@ export default function AnalysisCard({ analysis }) {
     analysis.impact === "None" ? "No impact" : `${analysis.impact} impact`;
 
   return (
-    <div className={`analysis-card ${impactClass}`}>
+    <div className={`analysis-card ${impactClass}`} data-guide={dataGuide}>
       <div className="analysis-row">
         <span className="analysis-type">{analysis.type}</span>
         <span className={`impact-tag ${impactClass}-tag`}>

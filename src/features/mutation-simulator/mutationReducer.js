@@ -13,6 +13,8 @@
 //   { type: "SET_TOOL", tool }
 //   { type: "CLICK_BASE", index }
 //   { type: "RESET_SEQUENCE" }
+//   { type: "APPLY_PRESET_AND_TRANSLATE", presetId }
+//   { type: "JUMP_TO_ANIMATION_STEP", actionName?, codonIndex?, stepIndex? }
 
 import { ORIG_SEQ } from "../../shared/biology/constants.js";
 import { GC } from "../../shared/biology/geneticCode.js";
@@ -96,6 +98,13 @@ export function mutationReducer(state, action) {
         animation: initialAnimationState,
       };
 
+    case "APPLY_PRESET_AND_TRANSLATE": {
+      const presetState = applyPreset(action.presetId);
+      const effectiveSeq = getEffectiveSequence(presetState.bases);
+      const analysis = classifyMutation(effectiveSeq);
+      return { ...presetState, analysis, animation: initialAnimationState };
+    }
+
     case "TRANSLATE_MUTANT": {
       const effectiveSeq = getEffectiveSequence(state.bases);
       const analysis = classifyMutation(effectiveSeq);
@@ -134,6 +143,9 @@ export function mutationReducer(state, action) {
 
     case "ANIMATION_TICK":
       return advanceAnimation(state);
+
+    case "JUMP_TO_ANIMATION_STEP":
+      return jumpToAnimationStep(state, action);
 
     case "STOP_TRANSLATION":
       return {
@@ -196,7 +208,63 @@ function advanceAnimation(state) {
     };
   }
 
-  const visualStep = steps[nextStep];
+  const nextAnimation = applyAnimationVisualStep(
+    animation,
+    steps[nextStep],
+    codons
+  );
+
+  return {
+    ...state,
+    animation: nextAnimation,
+  };
+}
+
+function jumpToAnimationStep(state, action) {
+  if (!state.analysis || isStartLost(state)) return state;
+
+  const codons = splitCodons(getEffectiveSequence(state.bases));
+  const steps = buildMutationAnimationSteps(codons);
+  if (steps.length === 0) return state;
+
+  const stepIndex = resolveAnimationStepIndex(steps, action);
+  if (stepIndex < 0) return state;
+
+  let animation = {
+    ...initialAnimationState,
+    speed: state.animation.speed,
+  };
+
+  for (let i = 0; i <= stepIndex; i++) {
+    animation = applyAnimationVisualStep(animation, steps[i], codons);
+  }
+
+  return {
+    ...state,
+    animation: {
+      ...animation,
+      isPlaying: false,
+    },
+  };
+}
+
+function resolveAnimationStepIndex(steps, action) {
+  if (Number.isInteger(action.stepIndex)) {
+    return Math.min(Math.max(action.stepIndex, 0), steps.length - 1);
+  }
+
+  return steps.findIndex((step) => {
+    const actionMatches =
+      !action.actionName || step.action === action.actionName;
+    const codonMatches =
+      !Number.isInteger(action.codonIndex) ||
+      step.codonIndex === action.codonIndex;
+
+    return actionMatches && codonMatches;
+  });
+}
+
+function applyAnimationVisualStep(animation, visualStep, codons) {
   const isRelease = visualStep.action === "release";
   const aminoAcid =
     visualStep.action === "showLarge" ? "Met" :
@@ -208,15 +276,12 @@ function advanceAnimation(state) {
       : animation.protein;
 
   return {
-    ...state,
-    animation: {
-      ...animation,
-      stepIndex: nextStep,
-      riboCodonIndex: visualStep.riboCodonIndex,
-      protein: nextProtein,
-      isPlaying: isRelease ? false : animation.isPlaying,
-      isFinished: isRelease,
-    },
+    ...animation,
+    stepIndex: visualStep.stepIndex ?? animation.stepIndex + 1,
+    riboCodonIndex: visualStep.riboCodonIndex,
+    protein: nextProtein,
+    isPlaying: isRelease ? false : animation.isPlaying,
+    isFinished: isRelease,
   };
 }
 

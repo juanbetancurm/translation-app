@@ -7,6 +7,7 @@
 // otherwise look like many missense changes.
 
 import { ORIG_SEQ, ORIG_CODONS } from "../../shared/biology/constants.js";
+import { GC } from "../../shared/biology/geneticCode.js";
 import { splitCodons, translateSeq } from "../../shared/biology/translation.js";
 
 const STOP_CODONS = new Set(["UAA", "UAG", "UGA"]);
@@ -127,6 +128,11 @@ export function classifyMutation(mutantSeq) {
       mutantProtein,
       originalProtein,
       diffPositions: positionsFrom(mutantStopIndex, originalProtein.length),
+      stopCodon: mutantCodons[mutantStopIndex],
+      stopCodonIndex: mutantStopIndex,
+      originalCodon: ORIG_CODONS[mutantStopIndex],
+      mutantCodon: mutantCodons[mutantStopIndex],
+      originalAminoAcid: translateCodon(ORIG_CODONS[mutantStopIndex]),
     });
   }
 
@@ -180,4 +186,8 @@ function positionsFrom(start, end) {
   const out = [];
   for (let i = start; i < end; i++) out.push(i);
   return out;
+}
+
+function translateCodon(codon) {
+  return codon ? GC[codon] : null;
 }

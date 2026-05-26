@@ -17,6 +17,7 @@ export default function PresetButtons({ onApplyPreset }) {
             className="preset-btn"
             onClick={() => onApplyPreset(preset.id)}
             title={preset.classification}
+            data-guide={preset.id === "nonsense" ? "nonsense-preset" : undefined}
           >
             {preset.label}
           </button>

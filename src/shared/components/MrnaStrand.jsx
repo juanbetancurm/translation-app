@@ -17,6 +17,7 @@
 //                  components to measure each codon's DOM position
 //   headerLabel    optional override for the middle header label
 //                  (default "mRNA"; the Mutation Simulator uses "Mutated mRNA")
+//   dataGuide      optional stable tour target
 
 import Codon from "./Codon";
 import "./MrnaStrand.css";
@@ -29,6 +30,7 @@ export default function MrnaStrand({
   strandId,
   codonRefs,
   headerLabel = "mRNA",
+  dataGuide,
 }) {
   // For each codon, derive which of its three base positions are mutated.
   // The incoming mutatedPositions Set is sequence-wide, so we have to
@@ -44,7 +46,7 @@ export default function MrnaStrand({
   }
 
   return (
-    <div className="mrna-row">
+    <div className="mrna-row" data-guide={dataGuide}>
       <div className="mrna-lbl">
         <span>5' ─</span>
         <span>{headerLabel}</span>

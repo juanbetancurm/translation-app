@@ -1,6 +1,7 @@
 //
 // The ribosome sprite layer. The parent supplies the horizontal `left`
 // coordinate; CSS handles the visual transition and sprite rendering.
+// Optional dataGuide marks the sprite as a stable guided-tour target.
 
 import "./Ribosome.css";
 
@@ -10,6 +11,7 @@ export default function Ribosome({
   largeVisible = true,
   largePreview = false,
   fadingOut = false,
+  dataGuide,
 }) {
   const wrapperClass = `ribo${visible ? "" : " hidden"}${
     fadingOut ? " ribo-fading" : ""
@@ -27,6 +29,7 @@ export default function Ribosome({
       className={wrapperClass}
       style={{ left: `${left}px` }}
       aria-label="Ribosome"
+      data-guide={dataGuide}
     >
       <div
         className="ribo-lg"

@@ -10,18 +10,35 @@ export default function ProteinComparison({
   diffPositions,
   mutantProgress = mutantProtein.length,
   showProgress = false,
+  stopCodon,
+  stopCodonIndex = null,
+  dataGuide,
 }) {
   const diffSet = new Set(diffPositions);
-  const maxLen = Math.max(originalProtein.length, mutantProtein.length);
+  const stopDisplayIndex =
+    Number.isInteger(stopCodonIndex) && stopCodon ? stopCodonIndex : null;
+  const maxLen = Math.max(
+    originalProtein.length,
+    mutantProtein.length,
+    stopDisplayIndex == null ? 0 : stopDisplayIndex + 1
+  );
   const origRow = Array.from({ length: maxLen }, (_, i) =>
     i < originalProtein.length ? originalProtein[i] : null
   );
-  const mutRow = Array.from({ length: maxLen }, (_, i) =>
-    i < mutantProtein.length ? mutantProtein[i] : null
-  );
+  const mutRow = Array.from({ length: maxLen }, (_, i) => {
+    if (i < mutantProtein.length) {
+      return { label: mutantProtein[i], type: "amino-acid" };
+    }
+
+    if (i === stopDisplayIndex) {
+      return { label: "STOP", type: "stop", title: `${stopCodon} STOP codon` };
+    }
+
+    return null;
+  });
 
   return (
-    <div className="protein-compare">
+    <div className="protein-compare" data-guide={dataGuide}>
       <div className="protein-row">
         <div className="protein-label">Original:</div>
         <div className="protein-beads">
@@ -39,20 +56,27 @@ export default function ProteinComparison({
           {mutantProtein.length === 0 ? (
             <span className="protein-empty-message">No protein produced</span>
           ) : (
-            mutRow.map((aa, i) => (
-              <span
-                key={i}
-                className={`bead bead-${aa || "empty"}${
-                  diffSet.has(i) ? " bead-diff" : ""
-                }${
-                  showProgress && aa && i >= mutantProgress
-                    ? " bead-pending"
-                    : ""
-                }`}
-              >
-                {aa || "-"}
-              </span>
-            ))
+            mutRow.map((bead, i) => {
+              const label = bead?.label;
+              return (
+                <span
+                  key={i}
+                  className={`bead bead-${label || "empty"}${
+                    bead?.type === "stop" ? " bead-stop" : ""
+                  }${diffSet.has(i) ? " bead-diff" : ""}${
+                    showProgress &&
+                    label &&
+                    bead?.type !== "stop" &&
+                    i >= mutantProgress
+                      ? " bead-pending"
+                      : ""
+                  }`}
+                  title={bead?.title}
+                >
+                  {label || "-"}
+                </span>
+              );
+            })
           )}
         </div>
       </div>

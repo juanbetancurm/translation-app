@@ -6,6 +6,8 @@
 
 import {
   createRef,
+  useCallback,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useReducer,
@@ -16,6 +18,7 @@ import AnalysisCard from "./components/AnalysisCard";
 import MutantAnimationStage from "./components/MutantAnimationStage";
 import PresetButtons from "./components/PresetButtons";
 import ProteinComparison from "./components/ProteinComparison";
+import GuidedTour from "../../shared/guided-tour/GuidedTour.jsx";
 import EmergingPolypeptide from "../../shared/components/EmergingPolypeptide";
 import ReleaseFactor from "../../shared/components/ReleaseFactor";
 import Ribosome from "../../shared/components/Ribosome";
@@ -27,6 +30,7 @@ import TrnaMolecule from "../../shared/components/TrnaMolecule";
 import { GC } from "../../shared/biology/geneticCode.js";
 import { ORIG_SEQ } from "../../shared/biology/constants.js";
 import { ac, splitCodons } from "../../shared/biology/translation.js";
+import { getGuideStatus } from "../../shared/guided-tour/guidedTourStorage.js";
 import {
   computeCodonCenter,
   computeRibosomeLeft,
@@ -44,10 +48,15 @@ import {
   mutationReducer,
   getEffectiveSequence,
 } from "./mutationReducer.js";
+import { MUTATION_TYPES } from "./mutationClassifier.js";
+import {
+  MUTATION_GUIDE_STORAGE_KEY,
+  mutationGuideSteps,
+} from "./mutationGuideSteps.js";
+import { createMutationGuideHooks } from "./mutationGuideHooks.js";
 import "./MutationSimulator.css";
 
 const STOP_CODONS = new Set(["UAA", "UAG", "UGA"]);
-const START_LOST_TYPE = "Start lost";
 
 function readSceneScale(element) {
   const scale = Number.parseFloat(
@@ -69,6 +78,29 @@ export default function MutationSimulator() {
   const [riboLeft, setRiboLeft] = useState(0);
   const [codonCenters, setCodonCenters] = useState([]);
   const [sceneScale, setSceneScale] = useState(1);
+  const [guideRun, setGuideRun] = useState(null);
+  const autoGuideScheduledRef = useRef(false);
+
+  const startGuide = useCallback((source) => {
+    setGuideRun({ source, id: Date.now() });
+  }, []);
+
+  const closeGuide = useCallback((status) => {
+    if (status === "completed" || status === "skipped") {
+      dispatch({ type: "RESET_SEQUENCE" });
+    }
+
+    setGuideRun(null);
+  }, []);
+
+  useEffect(() => {
+    if (autoGuideScheduledRef.current) return;
+    if (getGuideStatus(MUTATION_GUIDE_STORAGE_KEY) !== null) return;
+
+    autoGuideScheduledRef.current = true;
+    const timer = window.setTimeout(() => startGuide("auto"), 500);
+    return () => window.clearTimeout(timer);
+  }, [startGuide]);
 
   useLayoutEffect(() => {
     function updatePosition() {
@@ -142,10 +174,36 @@ export default function MutationSimulator() {
   const handleAnimationSpeedChange = (speed) =>
     dispatch({ type: "SET_ANIMATION_SPEED", speed });
 
+  const mutationGuideHooks = useMemo(
+    () =>
+      createMutationGuideHooks({
+        selectNonsensePreset() {
+          dispatch({ type: "APPLY_PRESET", presetId: "nonsense" });
+        },
+        translateCurrentMutation() {
+          dispatch({ type: "TRANSLATE_MUTANT" });
+        },
+        showNonsenseIntermediateStep() {
+          dispatch({
+            type: "JUMP_TO_ANIMATION_STEP",
+            actionName: "shift",
+            codonIndex: 1,
+          });
+        },
+        showNonsenseFinishedStep() {
+          dispatch({
+            type: "JUMP_TO_ANIMATION_STEP",
+            actionName: "release",
+          });
+        },
+      }),
+    []
+  );
+
   const originalCodons = splitCodons(ORIG_SEQ);
   const originalLabels = originalCodons.map((codon) => GC[codon] || "???");
   const originalStates = originalCodons.map(() => "upcoming");
-  const isStartLost = state.analysis?.type === START_LOST_TYPE;
+  const isStartLost = state.analysis?.type === MUTATION_TYPES.START_LOST;
 
   const effectiveSeq = getEffectiveSequence(state.bases);
   const mutantCodons = splitCodons(effectiveSeq);
@@ -206,164 +264,237 @@ export default function MutationSimulator() {
     Boolean(animationStarted) &&
     !isStartLost &&
     state.animation.stepIndex >= 0;
+  const isNonsense = state.analysis?.type === MUTATION_TYPES.NONSENSE;
+  const prematureStopIndex = mutantCodons.findIndex(
+    (codon, index) =>
+      STOP_CODONS.has(codon) && index < originalCodons.length - 1
+  );
+  const guideStopCodonIndex =
+    state.analysis?.stopCodonIndex ??
+    (prematureStopIndex >= 0 ? prematureStopIndex : null);
+  const guideStopCodon =
+    state.analysis?.stopCodon ??
+    (guideStopCodonIndex != null ? mutantCodons[guideStopCodonIndex] : null);
+  const guideOriginalCodon =
+    state.analysis?.originalCodon ??
+    (guideStopCodonIndex != null ? originalCodons[guideStopCodonIndex] : null);
+  const guideOriginalAminoAcid =
+    state.analysis?.originalAminoAcid ??
+    (guideOriginalCodon ? GC[guideOriginalCodon] : null);
+  const guideContext = {
+    stopCodon: guideStopCodon,
+    stopCodonIndex: guideStopCodonIndex,
+    originalCodon: guideOriginalCodon,
+    mutantCodon: guideStopCodon,
+    originalAminoAcid: guideOriginalAminoAcid,
+    originalProtein: state.analysis?.originalProtein,
+    mutantProtein: state.analysis?.mutantProtein,
+  };
 
   return (
-    <div className="mutation">
-      <div className="mutation-main">
-        <div className="stage">
-          {state.analysis && (
-            <div className="mutation-result-band">
-              <AnalysisCard analysis={state.analysis} />
-              <ProteinComparison
-                originalProtein={state.analysis.originalProtein}
-                mutantProtein={state.analysis.mutantProtein}
-                diffPositions={state.analysis.diffPositions}
-                mutantProgress={state.animation.protein.length}
-                showProgress={showProteinProgress}
-              />
-            </div>
-          )}
+    <>
+      <div className="mutation" data-guide="mutation-simulator">
+        <div className="mutation-main">
+          <div className="stage" data-guide="animation-stage">
+            {state.analysis && (
+              <div className="mutation-result-band">
+                <AnalysisCard
+                  analysis={state.analysis}
+                  dataGuide="mutation-status"
+                />
+                <ProteinComparison
+                  originalProtein={state.analysis.originalProtein}
+                  mutantProtein={state.analysis.mutantProtein}
+                  diffPositions={state.analysis.diffPositions}
+                  mutantProgress={state.animation.protein.length}
+                  showProgress={showProteinProgress}
+                  stopCodon={isNonsense ? state.analysis.stopCodon : null}
+                  stopCodonIndex={
+                    isNonsense ? state.analysis.stopCodonIndex : null
+                  }
+                  dataGuide="protein-comparison"
+                />
+              </div>
+            )}
 
-          <div className="mut-strand-wrapper">
-            <div
-              className={`mutation-strand-with-ribo${
-                ribosomeVisible ? " mutation-strand-with-ribo-animated" : ""
-              }`}
-              ref={containerRef}
-            >
-              {state.analysis && (
-                <div className="mutant-ribo-overlay">
-                  <Ribosome
-                    left={riboLeft}
-                    visible={ribosomeVisible}
-                    largeVisible={ribosomeLargeVisible}
-                    largePreview={ribosomeLargePreview}
-                    fadingOut={ribosomeFading}
-                  />
-                  <RibosomeMrnaOverlay
-                    codons={mutantCodons}
-                    codonCenters={codonCenters}
-                    states={mutantStates}
-                    visible={ribosomeVisible}
-                  />
-                  <EmergingPolypeptide
-                    aminoAcids={state.animation.protein}
-                    ribosomeLeft={riboLeft}
-                    visible={ribosomeVisible && ribosomeLargeVisible}
-                    released={ribosomeFading}
-                    sceneScale={sceneScale}
-                  />
-                  {trnas.map((trna, index) => {
-                    const codonCenter = codonCenters[trna.codonIndex];
-                    if (codonCenter == null) return null;
-                    return (
-                      <TrnaMolecule
-                        key={`${trna.site}-${trna.codonIndex}-${index}`}
-                        left={codonCenter - TRNA_HALF_WIDTH * sceneScale}
-                        bottom={TRNA_BOTTOM * sceneScale}
-                        site={trna.site}
-                        anticodon={trna.anticodon}
-                        aminoAcid={trna.aminoAcid}
-                        entering={trna.entering}
-                      />
-                    );
-                  })}
-                  {releaseFactor && (() => {
-                    const codonCenter = codonCenters[releaseFactor.codonIndex];
-                    if (codonCenter == null) return null;
-                    return (
-                      <ReleaseFactor
-                        left={
-                          codonCenter -
-                          RELEASE_FACTOR_HALF_WIDTH * sceneScale
-                        }
-                        bottom={RELEASE_FACTOR_BOTTOM * sceneScale}
-                      />
-                    );
-                  })()}
-                </div>
-              )}
+            <div className="mut-strand-wrapper">
+              <div
+                className={`mutation-strand-with-ribo${
+                  ribosomeVisible ? " mutation-strand-with-ribo-animated" : ""
+                }`}
+                ref={containerRef}
+              >
+                {state.analysis && (
+                  <div className="mutant-ribo-overlay">
+                    <Ribosome
+                      left={riboLeft}
+                      visible={ribosomeVisible}
+                      largeVisible={ribosomeLargeVisible}
+                      largePreview={ribosomeLargePreview}
+                      fadingOut={ribosomeFading}
+                      dataGuide="ribosome-sprite"
+                    />
+                    <RibosomeMrnaOverlay
+                      codons={mutantCodons}
+                      codonCenters={codonCenters}
+                      states={mutantStates}
+                      visible={ribosomeVisible}
+                    />
+                    <EmergingPolypeptide
+                      aminoAcids={state.animation.protein}
+                      ribosomeLeft={riboLeft}
+                      visible={ribosomeVisible && ribosomeLargeVisible}
+                      released={ribosomeFading}
+                      sceneScale={sceneScale}
+                    />
+                    {trnas.map((trna, index) => {
+                      const codonCenter = codonCenters[trna.codonIndex];
+                      if (codonCenter == null) return null;
+                      return (
+                        <TrnaMolecule
+                          key={`${trna.site}-${trna.codonIndex}-${index}`}
+                          left={codonCenter - TRNA_HALF_WIDTH * sceneScale}
+                          bottom={TRNA_BOTTOM * sceneScale}
+                          site={trna.site}
+                          anticodon={trna.anticodon}
+                          aminoAcid={trna.aminoAcid}
+                          entering={trna.entering}
+                        />
+                      );
+                    })}
+                    {releaseFactor && (() => {
+                      const codonCenter =
+                        codonCenters[releaseFactor.codonIndex];
+                      if (codonCenter == null) return null;
+                      return (
+                        <ReleaseFactor
+                          left={
+                            codonCenter -
+                            RELEASE_FACTOR_HALF_WIDTH * sceneScale
+                          }
+                          bottom={RELEASE_FACTOR_BOTTOM * sceneScale}
+                        />
+                      );
+                    })()}
+                  </div>
+                )}
+                <MrnaStrand
+                  codons={mutantCodons}
+                  labels={mutantLabels}
+                  states={mutantStates}
+                  strandId="mutant-strand"
+                  headerLabel="Mutant mRNA"
+                  codonRefs={codonRefs}
+                />
+              </div>
               <MrnaStrand
-                codons={mutantCodons}
-                labels={mutantLabels}
-                states={mutantStates}
-                strandId="mutant-strand"
-                headerLabel="Mutant mRNA"
-                codonRefs={codonRefs}
+                codons={originalCodons}
+                labels={originalLabels}
+                states={originalStates}
+                strandId="original-strand"
+                headerLabel="Original mRNA"
               />
             </div>
-            <MrnaStrand
-              codons={originalCodons}
-              labels={originalLabels}
-              states={originalStates}
-              strandId="original-strand"
-              headerLabel="Original mRNA"
-            />
           </div>
         </div>
+
+        <aside className="mutation-side">
+          <div className="mutation-side-scroll">
+            <div className="mut-panel" data-guide="mutation-lab">
+              <div className="mut-panel-heading">
+                <h3>Mutation Lab</h3>
+                <button
+                  type="button"
+                  className="guide-help-button"
+                  aria-label="Open guided explanation"
+                  onClick={() => startGuide("manual")}
+                  data-guide="help-button"
+                >
+                  ?
+                </button>
+              </div>
+              <p className="mut-instructions">
+                Click a base to <strong>change</strong> it. Use the tools to{" "}
+                <strong>delete</strong> or <strong>insert</strong> bases. Then
+                hit <strong>Translate Mutant</strong> to analyze the altered
+                mRNA.
+              </p>
+
+              <ToolPicker
+                activeTool={state.tool}
+                onToolChange={handleToolChange}
+              />
+
+              <SequenceEditor
+                bases={state.bases}
+                changes={state.changes}
+                onClick={handleBaseClick}
+                highlightCodonIndex={
+                  guideStopCodonIndex
+                }
+                dataGuide="sequence-grid"
+              />
+
+              <div className="mut-actions">
+                <button
+                  type="button"
+                  className="btn btn-1"
+                  onClick={handleStartTranslation}
+                  data-guide="translate-mutant-button"
+                >
+                  Translate Mutant -&gt;
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-2"
+                  onClick={handleReset}
+                  data-guide="reset-sequence-button"
+                >
+                  Reset Sequence
+                </button>
+              </div>
+            </div>
+
+            {state.analysis && (
+              <div className="mut-animation-panel">
+                <h3>Animation</h3>
+                <MutantAnimationStage
+                  animation={state.animation}
+                  onPlay={handleAnimationPlay}
+                  onPause={handleAnimationPause}
+                  onReset={handleAnimationReset}
+                  onSpeedChange={handleAnimationSpeedChange}
+                  onTick={handleAnimationTick}
+                  disabled={isStartLost}
+                  guideTargets={{
+                    controls: "animation-controls",
+                    next: "next-step-button",
+                    auto: "auto-button",
+                    speed: "speed-control",
+                  }}
+                />
+              </div>
+            )}
+
+            <div className="mut-presets-panel">
+              <PresetButtons onApplyPreset={handleApplyPreset} />
+            </div>
+          </div>
+        </aside>
       </div>
 
-      <aside className="mutation-side">
-        <div className="mutation-side-scroll">
-          <div className="mut-panel">
-            <h3>Mutation Lab</h3>
-            <p className="mut-instructions">
-              Click a base to <strong>change</strong> it. Use the tools to{" "}
-              <strong>delete</strong> or <strong>insert</strong> bases. Then
-              hit <strong>Translate Mutant</strong> to analyze the altered
-              mRNA.
-            </p>
-
-            <ToolPicker
-              activeTool={state.tool}
-              onToolChange={handleToolChange}
-            />
-
-            <SequenceEditor
-              bases={state.bases}
-              changes={state.changes}
-              onClick={handleBaseClick}
-            />
-
-            <div className="mut-actions">
-              <button
-                type="button"
-                className="btn btn-1"
-                onClick={handleStartTranslation}
-              >
-                Translate Mutant -&gt;
-              </button>
-              <button
-                type="button"
-                className="btn btn-2"
-                onClick={handleReset}
-              >
-                Reset Sequence
-              </button>
-            </div>
-          </div>
-
-          {state.analysis && (
-            <div className="mut-animation-panel">
-              <h3>Animation</h3>
-              <MutantAnimationStage
-                animation={state.animation}
-                onPlay={handleAnimationPlay}
-                onPause={handleAnimationPause}
-                onReset={handleAnimationReset}
-                onSpeedChange={handleAnimationSpeedChange}
-                onTick={handleAnimationTick}
-                disabled={isStartLost}
-              />
-            </div>
-          )}
-
-          <div className="mut-presets-panel">
-            <PresetButtons onApplyPreset={handleApplyPreset} />
-          </div>
-        </div>
-      </aside>
-    </div>
+      {guideRun && (
+        <GuidedTour
+          key={guideRun.id}
+          isOpen
+          steps={mutationGuideSteps}
+          hooks={mutationGuideHooks}
+          storageKey={MUTATION_GUIDE_STORAGE_KEY}
+          context={guideContext}
+          onClose={closeGuide}
+        />
+      )}
+    </>
   );
 }
 
@@ -405,6 +536,13 @@ function getAnimationTrnas(step, codons) {
     }
 
     case "shift":
+      // A STOP codon recruits release factors, not an incoming aminoacyl-tRNA.
+      // Hide the spent P-site tRNA in this simplified view so the pause reads
+      // as "approaching termination" instead of "GGA is arriving next".
+      if (STOP_CODONS.has(codons[step.codonIndex + 1])) {
+        return [];
+      }
+
       return [
         {
           site: "p",

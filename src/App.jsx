@@ -13,6 +13,7 @@ export default function App() {
       <nav className="tabs">
         <NavLink
           to="/walkthrough"
+          data-guide="walkthrough-tab"
           className={({ isActive }) => `tab${isActive ? " tab-active" : ""}`}
         >
           <span className="tab-icon" aria-hidden="true">DNA</span>
@@ -20,6 +21,7 @@ export default function App() {
         </NavLink>
         <NavLink
           to="/mutation"
+          data-guide="mutation-tab"
           className={({ isActive }) => `tab${isActive ? " tab-active" : ""}`}
         >
           <span className="tab-icon" aria-hidden="true">Lab</span>

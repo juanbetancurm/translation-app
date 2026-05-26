@@ -232,6 +232,14 @@
   border-bottom: 1px solid var(--bd);
 }
 
+.mut-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: clamp(3px, 0.3vw, 6px);
+}
+
 .mut-animation-panel {
   border-bottom: 1px solid var(--bd);
   background:
@@ -245,7 +253,41 @@
   color: var(--ac);
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  margin: 0 0 clamp(3px, 0.3vw, 6px);
+  margin: 0;
+}
+
+.mut-animation-panel h3 {
+  margin-bottom: clamp(3px, 0.3vw, 6px);
+}
+
+.guide-help-button {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--craft-radius-pill);
+  border: 1px solid rgba(37, 99, 235, 0.22);
+  background: rgba(216, 231, 255, 0.55);
+  color: var(--ac);
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+  transition:
+    background var(--craft-transition),
+    border-color var(--craft-transition),
+    box-shadow var(--craft-transition),
+    color var(--craft-transition),
+    transform var(--craft-transition);
+}
+
+.guide-help-button:hover,
+.guide-help-button:focus-visible {
+  background: rgba(37, 99, 235, 0.1);
+  border-color: rgba(37, 99, 235, 0.34);
+  box-shadow: 0 10px 22px rgba(29, 78, 216, 0.1);
+  color: var(--ac2);
+  outline: none;
+  transform: translateY(-1px);
 }
 
 .mut-instructions {
@@ -344,4 +386,9 @@
 [data-theme="dark"] .mut-animation-panel {
   background:
     linear-gradient(180deg, rgba(12, 30, 53, 0.94), rgba(8, 20, 36, 0.82));
+}
+
+[data-theme="dark"] .guide-help-button {
+  background: rgba(15, 39, 66, 0.72);
+  border-color: rgba(191, 219, 254, 0.16);
 }

@@ -22,6 +22,7 @@ export default function StepExplanation({
   stepTitle,
   stepText,
   lookupCodon,
+  dataGuide,
 }) {
   // Compute lookup display from the codon
   const lookupAminoAcid = lookupCodon ? GC[lookupCodon] : null;
@@ -29,7 +30,7 @@ export default function StepExplanation({
 
   return (
     <>
-      <div className="sb-section">
+      <div className="sb-section" data-guide={dataGuide}>
         <h3>
           Step <span>{stepIndex < 0 ? 0 : stepIndex + 1}</span> —{" "}
           <span>{stepTitle}</span>

@@ -68,6 +68,19 @@
   border-color: var(--tx3);
 }
 
+.mut-base-guide-codon {
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.14),
+    0 10px 22px rgba(29, 78, 216, 0.12);
+}
+
+.mut-base-guide-codon.mut-base-changed {
+  box-shadow:
+    0 0 0 3px rgba(212, 47, 80, 0.14),
+    0 0 0 7px rgba(37, 99, 235, 0.1),
+    0 10px 22px rgba(212, 47, 80, 0.12);
+}
+
 .mut-base .pos {
   position: absolute;
   top: -12px;

@@ -177,9 +177,9 @@ export default function TranslationWalkthrough() {
 
   // ── Render ───────────────────────────────────────────────────────
   return (
-    <div className="walkthrough">
+    <div className="walkthrough" data-guide="walkthrough-simulator">
       <div className="walkthrough-main">
-        <div className="stage">
+        <div className="stage" data-guide="animation-stage">
           <PhaseBanner phase={state.phase} />
 
         <div className="strand-with-ribo" ref={containerRef}>
@@ -244,10 +244,14 @@ export default function TranslationWalkthrough() {
             states={state.codonStates}
             strandId={STRAND_ID}
             codonRefs={codonRefs}
+            dataGuide="walkthrough-mrna"
           />
         </div>
 
-          <PolypeptideChain aminoAcids={state.protein} />
+          <PolypeptideChain
+            aminoAcids={state.protein}
+            dataGuide="walkthrough-protein-result"
+          />
         </div>
       </div>
 
@@ -258,6 +262,7 @@ export default function TranslationWalkthrough() {
             stepTitle={state.stepTitle}
             stepText={state.stepText}
             lookupCodon={state.lookupCodon}
+            dataGuide="step-explanation"
           />
         </div>
         <ControlBar
@@ -268,6 +273,13 @@ export default function TranslationWalkthrough() {
           isAutoRunning={isAutoRunning}
           nextDisabled={nextDisabled || isAutoRunning}
           speed={speed}
+          guideTargets={{
+            controls: "animation-controls",
+            next: "next-step-button",
+            auto: "auto-button",
+            reset: "animation-reset-button",
+            speed: "speed-control",
+          }}
         />
       </aside>
     </div>

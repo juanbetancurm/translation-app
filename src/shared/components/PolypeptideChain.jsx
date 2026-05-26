@@ -15,6 +15,7 @@
 //                    rendered with a dashed border (the "wrong" style)
 //   label            caption text above the chain
 //                    (default: "Growing polypeptide:")
+//   dataGuide        optional stable tour target
 
 import { AA_COL } from "../biology/geneticCode.js";
 import "./PolypeptideChain.css";
@@ -23,9 +24,10 @@ export default function PolypeptideChain({
   aminoAcids,
   wrongFromIndex,
   label = "Growing polypeptide:",
+  dataGuide,
 }) {
   return (
-    <div className="pep-area">
+    <div className="pep-area" data-guide={dataGuide}>
       <div className="pep-lbl">{label}</div>
       <div className="pep">
         {aminoAcids.map((aa, i) => {
