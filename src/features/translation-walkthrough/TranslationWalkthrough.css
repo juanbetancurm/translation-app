@@ -82,6 +82,9 @@
 
 /* The wrapper ties the ribosome layer to the strand layer. */
 .strand-with-ribo {
+  --fixed-ribosome: 0;
+  --track-offset: 0px;
+
   position: relative;
   width: 100%;
   max-width: min(100%, calc(760px * var(--scene-scale)));
@@ -98,6 +101,9 @@
 .strand-with-ribo > .mrna-row {
   margin-top: calc(285px * var(--scene-scale));
   max-width: none;
+  transform: translateX(var(--track-offset));
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .walkthrough .mrna-row,
@@ -235,14 +241,69 @@
 }
 
 @media (max-width: 560px) {
+  .walkthrough {
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .walkthrough-main {
+    min-height: 0;
+  }
+
   .walkthrough .stage {
-    --scene-scale: 0.78;
+    --scene-scale: 0.72;
+
+    overflow-x: hidden;
+    padding: 10px 8px 12px;
+    gap: 8px;
+  }
+
+  .strand-with-ribo {
+    --fixed-ribosome: 1;
+
+    overflow: hidden;
+  }
+
+  .strand-with-ribo > .mrna-row {
+    padding-inline: 28px;
+  }
+
+  .walkthrough-side {
+    max-height: 250px;
+  }
+
+  .walkthrough-side-scroll {
+    order: 2;
+    max-height: 152px;
+  }
+
+  .walkthrough-side .controls {
+    order: 1;
+  }
+
+  .walkthrough .phase-banner {
+    top: 8px;
+    max-width: calc(100% - 24px);
+    padding: 6px 14px;
+    font-size: 10px;
+    text-align: center;
+  }
+
+  .walkthrough .pep-area {
+    margin-top: 6px;
   }
 }
 
 @media (max-width: 520px) {
   .walkthrough-side .controls {
     align-items: stretch;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .walkthrough-side .btn {
+    min-height: 42px;
+    padding: 9px 12px;
+    font-size: 13px;
   }
 
   .walkthrough-side .speed {

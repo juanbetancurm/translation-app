@@ -32,9 +32,10 @@ import StepExplanation from "./components/StepExplanation";
 import { GC } from "../../shared/biology/geneticCode.js";
 import { ORIG_CODONS } from "../../shared/biology/constants.js";
 import {
-  computeCodonCenter,
-  computeRibosomeLeft,
-} from "../../lib/ribosomePositioning.js";
+  computeTranslationSceneLayout,
+  readFixedRibosomeMode,
+  readSceneScale,
+} from "../../lib/translationSceneLayout.js";
 import {
   RELEASE_FACTOR_BOTTOM,
   RELEASE_FACTOR_HALF_WIDTH,
@@ -54,13 +55,6 @@ import "./TranslationWalkthrough.css";
 
 const STRAND_ID = "walkthrough-strand";
 
-function readSceneScale(element) {
-  const scale = Number.parseFloat(
-    getComputedStyle(element).getPropertyValue("--scene-scale")
-  );
-  return Number.isFinite(scale) && scale > 0 ? scale : 1;
-}
-
 export default function TranslationWalkthrough() {
   // ── Reducer-managed state ────────────────────────────────────────
   const [state, dispatch] = useReducer(walkthroughReducer, initialState);
@@ -70,6 +64,7 @@ export default function TranslationWalkthrough() {
   // positioning effect below. Not stored in the reducer because the
   // reducer is pure (cannot touch the DOM).
   const [riboLeft, setRiboLeft] = useState(0);
+  const [trackOffset, setTrackOffset] = useState(0);
   const [codonCenters, setCodonCenters] = useState([]);
   const [sceneScale, setSceneScale] = useState(1);
   const [isAutoRunning, setIsAutoRunning] = useState(false);
@@ -95,32 +90,46 @@ export default function TranslationWalkthrough() {
       const codonEl = codonRefs[state.riboCodonIndex]?.current;
       if (!container || !codonEl) return;
 
-      const containerRect = container.getBoundingClientRect();
       const scale = readSceneScale(container);
-      const centers = codonRefs.map((ref) => {
-        if (!ref.current) return null;
-        return computeCodonCenter(
-          ref.current.getBoundingClientRect(),
-          containerRect
-        );
+      const layout = computeTranslationSceneLayout({
+        container,
+        codonRefs,
+        activeCodonIndex: state.riboCodonIndex,
+        ribosomeWidth: RIBOSOME_WIDTH * scale,
+        fixedRibosome: readFixedRibosomeMode(container),
       });
 
       setSceneScale((currentScale) =>
         Math.abs(currentScale - scale) < 0.01 ? currentScale : scale
       );
-      setCodonCenters(centers);
-      setRiboLeft(
-        computeRibosomeLeft(
-          codonEl.getBoundingClientRect(),
-          containerRect,
-          RIBOSOME_WIDTH * scale
-        )
+      setCodonCenters(layout.codonCenters);
+      setTrackOffset((currentOffset) =>
+        Math.abs(currentOffset - layout.trackOffset) < 0.5
+          ? currentOffset
+          : layout.trackOffset
+      );
+      setRiboLeft((currentLeft) =>
+        Math.abs(currentLeft - layout.ribosomeLeft) < 0.5
+          ? currentLeft
+          : layout.ribosomeLeft
       );
     }
 
     updateOverlayPositions();
+    const resizeObserver =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(updateOverlayPositions);
+
+    if (resizeObserver && containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
     window.addEventListener("resize", updateOverlayPositions);
-    return () => window.removeEventListener("resize", updateOverlayPositions);
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", updateOverlayPositions);
+    };
   }, [codonRefs, state.stepIndex, state.riboCodonIndex, state.riboVisible]);
 
   const handleAutoTick = () => {
@@ -182,7 +191,11 @@ export default function TranslationWalkthrough() {
         <div className="stage" data-guide="animation-stage">
           <PhaseBanner phase={state.phase} />
 
-        <div className="strand-with-ribo" ref={containerRef}>
+        <div
+          className="strand-with-ribo"
+          ref={containerRef}
+          style={{ "--track-offset": `${trackOffset}px` }}
+        >
           <div className="ribo-zone">
             <Ribosome
               left={riboLeft}

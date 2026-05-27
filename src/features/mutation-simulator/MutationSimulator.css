@@ -164,6 +164,9 @@
 }
 
 .mutation-strand-with-ribo {
+  --fixed-ribosome: 0;
+  --track-offset: 0px;
+
   position: relative;
   width: 100%;
   max-width: none;
@@ -175,6 +178,9 @@
 
 .mutation-strand-with-ribo > .mrna-row {
   margin-top: 0;
+  transform: translateX(var(--track-offset));
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .mutant-ribo-overlay {
@@ -339,11 +345,51 @@
 
 @media (max-width: 560px) {
   .mutation {
-    grid-template-rows: minmax(0, 58%) minmax(0, 42%);
+    grid-template-rows: minmax(0, 1fr) minmax(260px, 38%);
   }
 
   .mutation .stage {
-    --scene-scale: 0.76;
+    --scene-scale: 0.7;
+
+    overflow-x: hidden;
+    padding: 8px;
+    gap: 5px;
+  }
+
+  .mutation-strand-with-ribo {
+    --fixed-ribosome: 1;
+  }
+
+  .mutation-strand-with-ribo > .mrna-row {
+    padding-inline: 28px;
+  }
+
+  .mut-strand-wrapper {
+    overflow: hidden;
+  }
+
+  .mutation-strand-with-ribo-animated {
+    padding-top: calc(232px * var(--scene-scale));
+  }
+
+  .mutant-ribo-overlay {
+    height: calc(232px * var(--scene-scale));
+  }
+
+  .mutation-result-band .analysis-card {
+    padding: 6px 10px;
+  }
+
+  .mutation-result-band .analysis-row {
+    gap: 6px;
+  }
+
+  .mutation-result-band .analysis-type {
+    font-size: 13px;
+  }
+
+  .mutation-result-band .analysis-explanation {
+    font-size: 11px;
   }
 
   .mutation-result-band .protein-row {
@@ -364,7 +410,17 @@
   .mut-panel,
   .mut-animation-panel,
   .mut-presets-panel {
-    padding: 16px;
+    padding: 12px;
+  }
+
+  .mut-instructions {
+    font-size: 13px;
+  }
+
+  .mut-actions .btn {
+    flex: 1 1 150px;
+    min-height: 42px;
+    padding: 9px 12px;
   }
 }
 

@@ -17,7 +17,8 @@ export default function App() {
           className={({ isActive }) => `tab${isActive ? " tab-active" : ""}`}
         >
           <span className="tab-icon" aria-hidden="true">DNA</span>
-          Translation Walkthrough
+          <span className="tab-label-wide">Translation Walkthrough</span>
+          <span className="tab-label-short">Translation</span>
         </NavLink>
         <NavLink
           to="/mutation"
@@ -25,14 +26,16 @@ export default function App() {
           className={({ isActive }) => `tab${isActive ? " tab-active" : ""}`}
         >
           <span className="tab-icon" aria-hidden="true">Lab</span>
-          Mutation Simulator
+          <span className="tab-label-wide">Mutation Simulator</span>
+          <span className="tab-label-short">Mutation</span>
         </NavLink>
         <a
           href="https://www.labolavs.com/category/education"
           className="tab tab-external"
         >
           <span className="tab-icon" aria-hidden="true">Edu</span>
-          Education
+          <span className="tab-label-wide">Education</span>
+          <span className="tab-label-short">Education</span>
         </a>
       </nav>
 

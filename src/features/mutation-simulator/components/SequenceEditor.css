@@ -94,12 +94,22 @@
 
 @media (max-width: 520px) {
   .mut-mrna {
-    grid-template-columns: repeat(8, 36px);
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    width: 100%;
+    max-width: 348px;
   }
 
   .mut-base {
-    width: 36px;
-    height: 36px;
+    width: 100%;
+    min-height: 40px;
+    height: auto;
+    aspect-ratio: 1;
+  }
+}
+
+@media (max-width: 360px) {
+  .mut-mrna {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
 

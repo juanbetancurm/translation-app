@@ -32,9 +32,10 @@ import { ORIG_SEQ } from "../../shared/biology/constants.js";
 import { ac, splitCodons } from "../../shared/biology/translation.js";
 import { getGuideStatus } from "../../shared/guided-tour/guidedTourStorage.js";
 import {
-  computeCodonCenter,
-  computeRibosomeLeft,
-} from "../../lib/ribosomePositioning.js";
+  computeTranslationSceneLayout,
+  readFixedRibosomeMode,
+  readSceneScale,
+} from "../../lib/translationSceneLayout.js";
 import {
   RELEASE_FACTOR_BOTTOM,
   RELEASE_FACTOR_HALF_WIDTH,
@@ -58,13 +59,6 @@ import "./MutationSimulator.css";
 
 const STOP_CODONS = new Set(["UAA", "UAG", "UGA"]);
 
-function readSceneScale(element) {
-  const scale = Number.parseFloat(
-    getComputedStyle(element).getPropertyValue("--scene-scale")
-  );
-  return Number.isFinite(scale) && scale > 0 ? scale : 1;
-}
-
 export default function MutationSimulator() {
   const [state, dispatch] = useReducer(
     mutationReducer,
@@ -76,6 +70,7 @@ export default function MutationSimulator() {
     []
   );
   const [riboLeft, setRiboLeft] = useState(0);
+  const [trackOffset, setTrackOffset] = useState(0);
   const [codonCenters, setCodonCenters] = useState([]);
   const [sceneScale, setSceneScale] = useState(1);
   const [guideRun, setGuideRun] = useState(null);
@@ -108,35 +103,47 @@ export default function MutationSimulator() {
       const codonEl = codonRefs[state.animation.riboCodonIndex]?.current;
       if (!container || !codonEl) return;
 
-      const containerRect = container.getBoundingClientRect();
       const scale = readSceneScale(container);
-      const centers = codonRefs.map((ref) => {
-        if (!ref.current) return null;
-        return computeCodonCenter(
-          ref.current.getBoundingClientRect(),
-          containerRect
-        );
+      const layout = computeTranslationSceneLayout({
+        container,
+        codonRefs,
+        activeCodonIndex: state.animation.riboCodonIndex,
+        ribosomeWidth: RIBOSOME_WIDTH * scale,
+        fixedRibosome: readFixedRibosomeMode(container),
+        clampRibosome: true,
       });
 
       setSceneScale((currentScale) =>
         Math.abs(currentScale - scale) < 0.01 ? currentScale : scale
       );
-      setCodonCenters(centers);
-      const ribosomeWidth = RIBOSOME_WIDTH * scale;
-      const rawRiboLeft = computeRibosomeLeft(
-        codonEl.getBoundingClientRect(),
-        containerRect,
-        ribosomeWidth
+      setCodonCenters(layout.codonCenters);
+      setTrackOffset((currentOffset) =>
+        Math.abs(currentOffset - layout.trackOffset) < 0.5
+          ? currentOffset
+          : layout.trackOffset
       );
-      const maxRiboLeft = Math.max(0, containerRect.width - ribosomeWidth);
-      setRiboLeft(
-        Math.min(Math.max(rawRiboLeft, 0), maxRiboLeft)
+      setRiboLeft((currentLeft) =>
+        Math.abs(currentLeft - layout.ribosomeLeft) < 0.5
+          ? currentLeft
+          : layout.ribosomeLeft
       );
     }
 
     updatePosition();
+    const resizeObserver =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(updatePosition);
+
+    if (resizeObserver && containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
     window.addEventListener("resize", updatePosition);
-    return () => window.removeEventListener("resize", updatePosition);
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", updatePosition);
+    };
   }, [
     state.animation.riboCodonIndex,
     state.animation.stepIndex,
@@ -323,6 +330,7 @@ export default function MutationSimulator() {
                   ribosomeVisible ? " mutation-strand-with-ribo-animated" : ""
                 }`}
                 ref={containerRef}
+                style={{ "--track-offset": `${trackOffset}px` }}
               >
                 {state.analysis && (
                   <div className="mutant-ribo-overlay">

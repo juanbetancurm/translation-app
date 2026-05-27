@@ -84,6 +84,10 @@
   color: var(--ac2);
 }
 
+.tab-label-short {
+  display: none;
+}
+
 [data-theme="dark"] .tabs {
   background: linear-gradient(
     180deg,
@@ -134,6 +138,14 @@
 
   .tab-external {
     margin-left: 0;
+  }
+
+  .tab-label-wide {
+    display: none;
+  }
+
+  .tab-label-short {
+    display: inline;
   }
 }
 
