@@ -1,25 +1,5 @@
-// 
-//
-// The mRNA strand: a row of Codon blocks with the 5' / 3' direction
-// indicators above them. This is the canvas on which the ribosome appears
-// to slide during translation.
-//
-// Props:
-//   codons         array of 3-letter strings, e.g. ["AUG", "CCU", ...]
-//   labels         array of amino acid labels for each codon
-//   states         array of state strings, one per codon
-//   mutatedPositions  optional Set of mutated base indices, indexed across
-//                     the full sequence (0..(codons.length*3 - 1))
-//   strandId       optional unique HTML id prefix for the codon elements;
-//                  each codon gets id = `${strandId}-c${codonIndex}`. Used
-//                  by the ribosome positioning code in Phase 4.
-//   codonRefs      optional array of refs, one per codon, used by overlay
-//                  components to measure each codon's DOM position
-//   headerLabel    optional override for the middle header label
-//                  (default "mRNA"; the Mutation Simulator uses "Mutated mRNA")
-//   dataGuide      optional stable tour target
-
 import Codon from "./Codon";
+import { useTranslation } from "../../i18n/i18nContext.js";
 import "./MrnaStrand.css";
 
 export default function MrnaStrand({
@@ -29,12 +9,12 @@ export default function MrnaStrand({
   mutatedPositions,
   strandId,
   codonRefs,
-  headerLabel = "mRNA",
+  headerLabel,
   dataGuide,
 }) {
-  // For each codon, derive which of its three base positions are mutated.
-  // The incoming mutatedPositions Set is sequence-wide, so we have to
-  // partition it per codon.
+  const { t } = useTranslation();
+  const resolvedHeaderLabel = headerLabel ?? t("shared.mrna");
+
   function basesMutatedInCodon(codonIndex) {
     if (!mutatedPositions) return null;
     const start = codonIndex * 3;
@@ -48,9 +28,9 @@ export default function MrnaStrand({
   return (
     <div className="mrna-row" data-guide={dataGuide}>
       <div className="mrna-lbl">
-        <span>5' ─</span>
-        <span>{headerLabel}</span>
-        <span>─ 3'</span>
+        <span>5' -</span>
+        <span>{resolvedHeaderLabel}</span>
+        <span>- 3'</span>
       </div>
       <div className="mrna">
         {codons.map((codonBases, i) => (

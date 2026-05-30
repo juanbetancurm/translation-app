@@ -3,6 +3,8 @@
 // plain-English explanation.
 
 import "./AnalysisCard.css";
+import { useTranslation } from "../../../i18n/i18nContext.js";
+import { getAnalysisCopy } from "../mutationAnalysisCopy.js";
 
 const IMPACT_CLASS = {
   None: "impact-none",
@@ -12,21 +14,22 @@ const IMPACT_CLASS = {
 };
 
 export default function AnalysisCard({ analysis, dataGuide }) {
+  const { t } = useTranslation();
+
   if (!analysis) return null;
 
   const impactClass = IMPACT_CLASS[analysis.impact] || "impact-mod";
-  const impactLabel =
-    analysis.impact === "None" ? "No impact" : `${analysis.impact} impact`;
+  const analysisCopy = getAnalysisCopy(analysis, t);
 
   return (
     <div className={`analysis-card ${impactClass}`} data-guide={dataGuide}>
       <div className="analysis-row">
-        <span className="analysis-type">{analysis.type}</span>
+        <span className="analysis-type">{analysisCopy.typeLabel}</span>
         <span className={`impact-tag ${impactClass}-tag`}>
-          {impactLabel}
+          {analysisCopy.impactLabel}
         </span>
       </div>
-      <p className="analysis-explanation">{analysis.explanation}</p>
+      <p className="analysis-explanation">{analysisCopy.explanation}</p>
     </div>
   );
 }

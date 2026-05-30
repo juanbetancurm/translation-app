@@ -3,14 +3,17 @@
 // selecting a tool sends the new tool id back to the parent reducer.
 
 import "./ToolPicker.css";
+import { useTranslation } from "../../../i18n/i18nContext.js";
 
 const TOOLS = [
-  { id: "change", label: "Change base" },
-  { id: "delete", label: "Delete base" },
-  { id: "insert", label: "Insert after" },
+  { id: "change", labelKey: "mutation.tools.change" },
+  { id: "delete", labelKey: "mutation.tools.delete" },
+  { id: "insert", labelKey: "mutation.tools.insert" },
 ];
 
 export default function ToolPicker({ activeTool, onToolChange }) {
+  const { t } = useTranslation();
+
   return (
     <div className="tool-picker">
       {TOOLS.map((tool) => (
@@ -20,7 +23,7 @@ export default function ToolPicker({ activeTool, onToolChange }) {
           className={`mut-btn${activeTool === tool.id ? " mut-btn-active" : ""}`}
           onClick={() => onToolChange(tool.id)}
         >
-          {tool.label}
+          {t(tool.labelKey)}
         </button>
       ))}
     </div>

@@ -25,12 +25,6 @@ import { TRANSLATION_STEPS } from "./stepDefinitions.js";
 
 export const initialState = {
   stepIndex: -1,
-  stepTitle: "Ready",
-  stepText:
-    "Press <strong>Next Step</strong> to begin. We'll walk through all " +
-    "three phases of translation: <em>initiation</em>, <em>elongation</em>, " +
-    "and <em>termination</em>. Each step explains exactly what the " +
-    "ribosome does and why.",
   phase: null,
   protein: [],
   codonStates: ORIG_CODONS.map(() => "upcoming"),
@@ -95,8 +89,6 @@ function computeStateAtStep(prevState, newIndex) {
   const next = {
     ...prevState,
     stepIndex: newIndex,
-    stepTitle: step.title,
-    stepText: step.text,
     phase: step.phase,
   };
 

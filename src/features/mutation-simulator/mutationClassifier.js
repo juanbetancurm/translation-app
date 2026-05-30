@@ -52,6 +52,7 @@ export function classifyMutation(mutantSeq) {
         "subunit scans for AUG to initiate translation; without it, no " +
         "protein is produced from this mRNA. This is one of the most damaging " +
         "classes of variant.",
+      mutantStart,
       mutantProtein: [],
       originalProtein,
       diffPositions: [],
@@ -79,6 +80,7 @@ export function classifyMutation(mutantSeq) {
           `The sequence length changed by ${lengthDiff} bases, a multiple of 3. ` +
           "The reading frame is preserved, but the protein gains or loses " +
           "one or more amino acids. Protein function may be partially preserved.",
+        lengthDiff,
         mutantProtein,
         originalProtein,
         diffPositions,
@@ -100,6 +102,7 @@ export function classifyMutation(mutantSeq) {
         "The number is not a multiple of 3, so the reading frame shifts from " +
         "the indel onward. Every downstream codon is now read incorrectly, " +
         "usually leading to a premature STOP. Function is almost always lost.",
+      lengthDiff,
       mutantProtein,
       originalProtein,
       diffPositions,

@@ -5,6 +5,7 @@
 
 import { AA_COL } from "../biology/geneticCode.js";
 import { PEPTIDE_EXIT_OFFSET } from "../../lib/ribosomeGeometry.js";
+import { useTranslation } from "../../i18n/i18nContext.js";
 import "./EmergingPolypeptide.css";
 
 function pointFor(indexFromEnd, scale) {
@@ -36,6 +37,8 @@ export default function EmergingPolypeptide({
   released = false,
   sceneScale = 1,
 }) {
+  const { t } = useTranslation();
+
   if (!visible || aminoAcids.length === 0) return null;
 
   const scale = Number.isFinite(sceneScale) ? sceneScale : 1;
@@ -50,7 +53,7 @@ export default function EmergingPolypeptide({
         left: `${ribosomeLeft + PEPTIDE_EXIT_OFFSET.x * scale}px`,
         top: `${PEPTIDE_EXIT_OFFSET.y * scale}px`,
       }}
-      aria-label="Growing polypeptide emerging from ribosome"
+      aria-label={t("shared.emergingPolypeptideAria")}
     >
       {points.slice(1).map((point, i) => (
         <span

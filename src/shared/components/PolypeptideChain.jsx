@@ -18,17 +18,21 @@
 //   dataGuide        optional stable tour target
 
 import { AA_COL } from "../biology/geneticCode.js";
+import { useTranslation } from "../../i18n/i18nContext.js";
 import "./PolypeptideChain.css";
 
 export default function PolypeptideChain({
   aminoAcids,
   wrongFromIndex,
-  label = "Growing polypeptide:",
+  label,
   dataGuide,
 }) {
+  const { t } = useTranslation();
+  const resolvedLabel = label ?? t("shared.growingPolypeptide");
+
   return (
     <div className="pep-area" data-guide={dataGuide}>
-      <div className="pep-lbl">{label}</div>
+      <div className="pep-lbl">{resolvedLabel}</div>
       <div className="pep">
         {aminoAcids.map((aa, i) => {
           const color = AA_COL[aa] || "#8d99b4";

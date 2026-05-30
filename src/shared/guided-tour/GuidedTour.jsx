@@ -11,6 +11,7 @@ import GuidedTourMessage from "./GuidedTourMessage.jsx";
 import GuidedTourRing from "./GuidedTourRing.jsx";
 import { calculateMessagePosition } from "./guidedTourPosition.js";
 import { setGuideStatus } from "./guidedTourStorage.js";
+import { useTranslation } from "../../i18n/i18nContext.js";
 import "./guidedTour.css";
 
 function wait(ms) {
@@ -43,11 +44,11 @@ function isIntroStep(step) {
   return step?.kind === "intro";
 }
 
-function getStepKicker(steps, stepIndex) {
+function getStepKicker(steps, stepIndex, t) {
   const activeStep = steps[stepIndex];
 
   if (isIntroStep(activeStep)) {
-    return activeStep.kicker ?? "Introduction";
+    return activeStep.kicker ?? t("shared.guidedTour.introduction");
   }
 
   const stepCount = steps.filter((step) => !isIntroStep(step)).length;
@@ -55,7 +56,10 @@ function getStepKicker(steps, stepIndex) {
     .slice(0, stepIndex + 1)
     .filter((step) => !isIntroStep(step)).length;
 
-  return `Step ${currentStep} of ${stepCount}`;
+  return t("shared.guidedTour.stepOf", {
+    current: currentStep,
+    total: stepCount,
+  });
 }
 
 export default function GuidedTour({
@@ -66,6 +70,7 @@ export default function GuidedTour({
   context = {},
   onClose,
 }) {
+  const { t } = useTranslation();
   const [stepIndex, setStepIndex] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
   const [messagePosition, setMessagePosition] = useState(null);
@@ -338,7 +343,7 @@ export default function GuidedTour({
 
   const titleId = `guided-tour-title-${activeStep.id}`;
   const textId = `guided-tour-text-${activeStep.id}`;
-  const stepKicker = getStepKicker(steps, stepIndex);
+  const stepKicker = getStepKicker(steps, stepIndex, t);
 
   return createPortal(
     <div className="guided-tour-layer active">

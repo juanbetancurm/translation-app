@@ -4,6 +4,7 @@
 // the reducer's changes map: changed, inserted, or deleted.
 
 import "./SequenceEditor.css";
+import { useTranslation } from "../../../i18n/i18nContext.js";
 
 export default function SequenceEditor({
   bases,
@@ -12,6 +13,8 @@ export default function SequenceEditor({
   highlightCodonIndex = null,
   dataGuide,
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="mut-mrna" data-guide={dataGuide}>
       {bases.map((base, i) => {
@@ -34,7 +37,10 @@ export default function SequenceEditor({
             type="button"
             className={className}
             onClick={() => onClick(i)}
-            aria-label={`Edit base ${i + 1}: ${base}`}
+            aria-label={t("mutation.sequenceEditor.editBase", {
+              index: i + 1,
+              base,
+            })}
           >
             {isCodonStart && <span className="pos">{codonNumber}</span>}
             {base}

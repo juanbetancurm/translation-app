@@ -4,6 +4,7 @@
 // Optional dataGuide marks the sprite as a stable guided-tour target.
 
 import "./Ribosome.css";
+import { useTranslation } from "../../i18n/i18nContext.js";
 
 export default function Ribosome({
   left = 0,
@@ -13,6 +14,7 @@ export default function Ribosome({
   fadingOut = false,
   dataGuide,
 }) {
+  const { t } = useTranslation();
   const wrapperClass = `ribo${visible ? "" : " hidden"}${
     fadingOut ? " ribo-fading" : ""
   }`;
@@ -28,20 +30,20 @@ export default function Ribosome({
     <div
       className={wrapperClass}
       style={{ left: `${left}px` }}
-      aria-label="Ribosome"
+      aria-label={t("shared.ribosomeAria")}
       data-guide={dataGuide}
     >
       <div
         className="ribo-lg"
         style={largeStyle}
-        aria-label="60S large subunit"
+        aria-label={t("shared.largeSubunitAria")}
       />
       <div className="sites" style={sitesStyle}>
         <span className="site-e">E</span>
         <span className="site-p">P</span>
         <span className="site-a">A</span>
       </div>
-      <div className="ribo-sm" aria-label="40S small subunit" />
+      <div className="ribo-sm" aria-label={t("shared.smallSubunitAria")} />
     </div>
   );
 }

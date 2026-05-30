@@ -1,30 +1,4 @@
-//
-//
-// The row of action buttons that drives the animation: Next Step, Auto
-// (or Pause), Reset, and a speed slider. Used by both the Translation
-// Walkthrough and the Mutation Simulator.
-//
-// All buttons are dumb — they fire the corresponding callback. The
-// parent owns the state (whether auto is running, whether next is
-// disabled, current speed) and reflects that state through props.
-//
-// Props:
-//   onNext           callback for the Next button
-//   onToggleAuto     callback for the Auto/Pause button
-//   onReset          callback for the Reset button
-//   onSpeedChange    callback fired with the new speed (number, ms)
-//                    when the user drags the slider
-//   isAutoRunning    boolean; switches button label to "Pause" and adds
-//                    the .on style
-//   nextDisabled     boolean; disables the Next button
-//   autoDisabled     boolean; disables the Auto/Pause button
-//   speed            current speed in milliseconds
-//   minSpeed         slider minimum (default 400)
-//   maxSpeed         slider maximum (default 2500)
-//   speedStep        slider step (default 100)
-//   showSpeed        whether to render the slider (default true)
-//   guideTargets     optional data-guide targets for tour integration
-
+import { useTranslation } from "../../i18n/i18nContext.js";
 import "./ControlBar.css";
 
 export default function ControlBar({
@@ -42,6 +16,8 @@ export default function ControlBar({
   showSpeed = true,
   guideTargets = {},
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="controls" data-guide={guideTargets.controls}>
       <button
@@ -51,7 +27,7 @@ export default function ControlBar({
         disabled={nextDisabled}
         data-guide={guideTargets.next}
       >
-        Next Step →
+        {t("shared.controls.nextStep")}
       </button>
 
       <button
@@ -61,7 +37,7 @@ export default function ControlBar({
         disabled={autoDisabled}
         data-guide={guideTargets.auto}
       >
-        {isAutoRunning ? "⏸ Pause" : "▶ Auto"}
+        {isAutoRunning ? t("shared.controls.pause") : t("shared.controls.auto")}
       </button>
 
       <button
@@ -70,12 +46,12 @@ export default function ControlBar({
         onClick={onReset}
         data-guide={guideTargets.reset}
       >
-        Reset
+        {t("shared.controls.reset")}
       </button>
 
       {showSpeed && (
         <div className="speed" data-guide={guideTargets.speedGroup}>
-          <label htmlFor="speed-slider">Speed</label>
+          <label htmlFor="speed-slider">{t("shared.controls.speed")}</label>
           <input
             id="speed-slider"
             type="range"

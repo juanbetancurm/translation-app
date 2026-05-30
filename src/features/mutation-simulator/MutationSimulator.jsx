@@ -52,14 +52,16 @@ import {
 import { MUTATION_TYPES } from "./mutationClassifier.js";
 import {
   MUTATION_GUIDE_STORAGE_KEY,
-  mutationGuideSteps,
+  getMutationGuideSteps,
 } from "./mutationGuideSteps.js";
 import { createMutationGuideHooks } from "./mutationGuideHooks.js";
+import { useTranslation } from "../../i18n/i18nContext.js";
 import "./MutationSimulator.css";
 
 const STOP_CODONS = new Set(["UAA", "UAG", "UGA"]);
 
 export default function MutationSimulator() {
+  const { t } = useTranslation();
   const [state, dispatch] = useReducer(
     mutationReducer,
     initialMutationState
@@ -206,6 +208,7 @@ export default function MutationSimulator() {
       }),
     []
   );
+  const mutationGuideSteps = useMemo(() => getMutationGuideSteps(t), [t]);
 
   const originalCodons = splitCodons(ORIG_SEQ);
   const originalLabels = originalCodons.map((codon) => GC[codon] || "???");
@@ -391,7 +394,7 @@ export default function MutationSimulator() {
                   labels={mutantLabels}
                   states={mutantStates}
                   strandId="mutant-strand"
-                  headerLabel="Mutant mRNA"
+                  headerLabel={t("mutation.labels.mutantMrna")}
                   codonRefs={codonRefs}
                 />
               </div>
@@ -400,7 +403,7 @@ export default function MutationSimulator() {
                 labels={originalLabels}
                 states={originalStates}
                 strandId="original-strand"
-                headerLabel="Original mRNA"
+                headerLabel={t("mutation.labels.originalMrna")}
               />
             </div>
           </div>
@@ -410,23 +413,23 @@ export default function MutationSimulator() {
           <div className="mutation-side-scroll">
             <div className="mut-panel" data-guide="mutation-lab">
               <div className="mut-panel-heading">
-                <h3>Mutation Lab</h3>
+                <h3>{t("mutation.labels.labTitle")}</h3>
                 <button
                   type="button"
                   className="guide-help-button"
-                  aria-label="Open guided explanation"
+                  aria-label={t("mutation.labels.helpAria")}
                   onClick={() => startGuide("manual")}
                   data-guide="help-button"
                 >
                   ?
                 </button>
               </div>
-              <p className="mut-instructions">
-                Click a base to <strong>change</strong> it. Use the tools to{" "}
-                <strong>delete</strong> or <strong>insert</strong> bases. Then
-                hit <strong>Translate Mutant</strong> to analyze the altered
-                mRNA.
-              </p>
+              <p
+                className="mut-instructions"
+                dangerouslySetInnerHTML={{
+                  __html: t("mutation.instructions.html"),
+                }}
+              />
 
               <ToolPicker
                 activeTool={state.tool}
@@ -450,7 +453,7 @@ export default function MutationSimulator() {
                   onClick={handleStartTranslation}
                   data-guide="translate-mutant-button"
                 >
-                  Translate Mutant -&gt;
+                  {t("mutation.actions.translateMutant")}
                 </button>
                 <button
                   type="button"
@@ -458,14 +461,14 @@ export default function MutationSimulator() {
                   onClick={handleReset}
                   data-guide="reset-sequence-button"
                 >
-                  Reset Sequence
+                  {t("mutation.actions.resetSequence")}
                 </button>
               </div>
             </div>
 
             {state.analysis && (
               <div className="mut-animation-panel">
-                <h3>Animation</h3>
+                <h3>{t("mutation.labels.animationTitle")}</h3>
                 <MutantAnimationStage
                   animation={state.animation}
                   onPlay={handleAnimationPlay}

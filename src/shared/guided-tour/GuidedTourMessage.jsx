@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import { useTranslation } from "../../i18n/i18nContext.js";
 
 const GuidedTourMessage = forwardRef(function GuidedTourMessage(
   {
@@ -16,6 +17,7 @@ const GuidedTourMessage = forwardRef(function GuidedTourMessage(
   },
   ref
 ) {
+  const { t } = useTranslation();
   const positionStyle = messagePosition
     ? {
         left: messagePosition.left,
@@ -49,14 +51,14 @@ const GuidedTourMessage = forwardRef(function GuidedTourMessage(
           onClick={onBack}
           disabled={isFirstStep}
         >
-          Back
+          {t("shared.guidedTour.back")}
         </button>
         <button
           type="button"
           className="guided-tour-btn guided-tour-btn-ghost"
           onClick={onSkip}
         >
-          Skip
+          {t("shared.guidedTour.skip")}
         </button>
         <button
           ref={nextButtonRef}
@@ -64,7 +66,9 @@ const GuidedTourMessage = forwardRef(function GuidedTourMessage(
           className="guided-tour-btn guided-tour-btn-primary"
           onClick={onNext}
         >
-          {isFinalStep ? "Finish" : "Next"}
+          {isFinalStep
+            ? t("shared.guidedTour.finish")
+            : t("shared.guidedTour.next")}
         </button>
       </div>
     </section>

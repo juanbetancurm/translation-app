@@ -49,13 +49,17 @@ import {
 } from "./walkthroughReducer.js";
 import {
   TRANSLATION_STEPS,
+  getTranslationStepCopy,
 } from "./stepDefinitions.js";
 import { useAutoPlay } from "../../shared/hooks/useAutoPlay.js";
+import { useTranslation } from "../../i18n/i18nContext.js";
 import "./TranslationWalkthrough.css";
 
 const STRAND_ID = "walkthrough-strand";
 
 export default function TranslationWalkthrough() {
+  const { t } = useTranslation();
+
   // ── Reducer-managed state ────────────────────────────────────────
   const [state, dispatch] = useReducer(walkthroughReducer, initialState);
 
@@ -160,6 +164,7 @@ export default function TranslationWalkthrough() {
 
   // The Next button is disabled when we've reached the last step.
   const nextDisabled = state.stepIndex >= TRANSLATION_STEPS.length - 1;
+  const stepCopy = getTranslationStepCopy(state.stepIndex, t);
 
   // ── Event handlers ───────────────────────────────────────────────
   const handleNext = () => dispatch({ type: "NEXT_STEP" });
@@ -272,8 +277,8 @@ export default function TranslationWalkthrough() {
         <div className="walkthrough-side-scroll">
           <StepExplanation
             stepIndex={state.stepIndex}
-            stepTitle={state.stepTitle}
-            stepText={state.stepText}
+            stepTitle={stepCopy.title}
+            stepText={stepCopy.text}
             lookupCodon={state.lookupCodon}
             dataGuide="step-explanation"
           />

@@ -16,12 +16,7 @@
 //   label   optional custom label string that overrides the default
 
 import "./PhaseBanner.css";
-
-const PHASE_LABELS = {
-  init: "Phase 1: Initiation",
-  elong: "Phase 2: Elongation",
-  term: "Phase 3: Termination",
-};
+import { useTranslation } from "../../i18n/i18nContext.js";
 
 const PHASE_CLASSES = {
   init: "pb-init",
@@ -30,9 +25,11 @@ const PHASE_CLASSES = {
 };
 
 export default function PhaseBanner({ phase, label }) {
+  const { t } = useTranslation();
+
   if (!phase) return null;
 
-  const text = label ?? PHASE_LABELS[phase] ?? phase;
+  const text = label ?? t(`shared.phase.${phase}`) ?? phase;
   const cls = PHASE_CLASSES[phase] ?? "pb-init";
 
   return <div className={`phase-banner ${cls}`}>{text}</div>;
