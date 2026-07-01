@@ -17,6 +17,9 @@ export const es = {
     mutationIcon: "Lab",
     mutationWide: "Simulador de mutaciones",
     mutationShort: "Mutación",
+    codonIcon: "ARN",
+    codonWide: "Tabla de codones",
+    codonShort: "Codones",
     educationIcon: "Edu",
     educationWide: "Educación",
     educationShort: "Educación",
@@ -185,6 +188,90 @@ export const es = {
           "qué codón afecta, buscan el cambio de aminoácido y evalúan si la " +
           "función de la proteína se altera.",
       },
+    },
+  },
+
+
+  codonChart: {
+    hero: {
+      pillLabel: "ARN",
+      pillText: "Referencia interactiva del codigo genetico",
+      title: "Tabla de codones de ARN",
+      lead:
+        "Una matriz compacta de codones 4x4 organizada por el primer y segundo nucleotido. " +
+        "Haz clic en un codon para ver el nombre completo del aminoacido y la informacion " +
+        "relevante de inicio o parada.",
+    },
+    baseLegend: {
+      aria: "Bases de ARN",
+      U: "T(U) Uracilo",
+      C: "C Citosina",
+      A: "A Adenina",
+      G: "G Guanina",
+    },
+    matrix: {
+      aria: "Tabla interactiva de codones de ARN",
+      windowTitle: "Matriz de codones",
+      firstNucleotideShort: "1ro",
+      secondNucleotide: "Segundo nucleotido",
+      codonAria: ({ codon, name }) => codon + ": " + name,
+    },
+    detail: {
+      aria: "Descripcion del codon seleccionado",
+      label: "Codon seleccionado",
+    },
+    aminoAcids: {
+      alanine: "Alanina",
+      arginine: "Arginina",
+      asparagine: "Asparagina",
+      asparticAcid: "Acido aspartico",
+      cysteine: "Cisteina",
+      glutamicAcid: "Acido glutamico",
+      glutamine: "Glutamina",
+      glycine: "Glicina",
+      histidine: "Histidina",
+      isoleucine: "Isoleucina",
+      leucine: "Leucina",
+      lysine: "Lisina",
+      methionine: "Metionina",
+      phenylalanine: "Fenilalanina",
+      proline: "Prolina",
+      serine: "Serina",
+      stopSignal: "Senal de parada",
+      threonine: "Treonina",
+      tryptophan: "Triptofano",
+      tyrosine: "Tirosina",
+      valine: "Valina",
+    },
+    descriptions: {
+      standard: ({ codon, name }) => codon + " codifica " + name + ".",
+      start: ({ codon }) =>
+        codon + " codifica metionina y suele ser el codon de inicio de la traduccion.",
+      stop: ({ codon }) =>
+        codon + " es un codon de parada. Senala la terminacion de la traduccion y no codifica un aminoacido.",
+    },
+    tags: {
+      start: "Codon de inicio",
+      stop: "Codon de parada",
+      single: "Aminoacido de un solo codon",
+    },
+    groups: {
+      hydrophobic: "Aminoacido hidrofobico",
+      polar: "Aminoacido hidrofilico sin carga",
+      positive: "Aminoacido con carga positiva",
+      negative: "Aminoacido con carga negativa",
+      cysteine: "Cisteina",
+      stop: "Codon de parada de traduccion",
+    },
+    legend: {
+      aria: "Leyenda de colores",
+      hydrophobic: "Aminoacidos hidrofobicos",
+      start: "Codon de inicio de traduccion",
+      polar: "Aminoacidos hidrofilicos sin carga",
+      positive: "Aminoacidos con carga positiva",
+      negative: "Aminoacidos con carga negativa",
+      cysteine: "Cisteina",
+      stop: "Codones de parada de traduccion",
     },
   },
 

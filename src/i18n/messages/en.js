@@ -17,6 +17,9 @@ export const en = {
     mutationIcon: "Lab",
     mutationWide: "Mutation Simulator",
     mutationShort: "Mutation",
+    codonIcon: "RNA",
+    codonWide: "Codon Chart",
+    codonShort: "Codons",
     educationIcon: "Edu",
     educationWide: "Education",
     educationShort: "Education",
@@ -182,6 +185,90 @@ export const en = {
           "which codon it affects, look up the amino acid change, and " +
           "assess whether the protein's function is disrupted.",
       },
+    },
+  },
+
+
+  codonChart: {
+    hero: {
+      pillLabel: "RNA",
+      pillText: "Interactive genetic code reference",
+      title: "RNA Codon Table",
+      lead:
+        "A compact 4x4 codon matrix organized by first and second nucleotide. " +
+        "Click a codon to see the complete amino acid name and relevant start " +
+        "or stop information.",
+    },
+    baseLegend: {
+      aria: "RNA bases",
+      U: "T(U) Uracil",
+      C: "C Cytosine",
+      A: "A Adenine",
+      G: "G Guanine",
+    },
+    matrix: {
+      aria: "Interactive RNA codon table",
+      windowTitle: "Codon matrix",
+      firstNucleotideShort: "1st",
+      secondNucleotide: "Second nucleotide",
+      codonAria: ({ codon, name }) => codon + ": " + name,
+    },
+    detail: {
+      aria: "Selected codon description",
+      label: "Selected codon",
+    },
+    aminoAcids: {
+      alanine: "Alanine",
+      arginine: "Arginine",
+      asparagine: "Asparagine",
+      asparticAcid: "Aspartic acid",
+      cysteine: "Cysteine",
+      glutamicAcid: "Glutamic acid",
+      glutamine: "Glutamine",
+      glycine: "Glycine",
+      histidine: "Histidine",
+      isoleucine: "Isoleucine",
+      leucine: "Leucine",
+      lysine: "Lysine",
+      methionine: "Methionine",
+      phenylalanine: "Phenylalanine",
+      proline: "Proline",
+      serine: "Serine",
+      stopSignal: "Stop signal",
+      threonine: "Threonine",
+      tryptophan: "Tryptophan",
+      tyrosine: "Tyrosine",
+      valine: "Valine",
+    },
+    descriptions: {
+      standard: ({ codon, name }) => codon + " codes for " + name + ".",
+      start: ({ codon }) =>
+        codon + " codes for methionine and is the usual translation start codon.",
+      stop: ({ codon }) =>
+        codon + " is a stop codon. It signals translation termination and does not encode an amino acid.",
+    },
+    tags: {
+      start: "Start codon",
+      stop: "Stop codon",
+      single: "Single-codon amino acid",
+    },
+    groups: {
+      hydrophobic: "Hydrophobic amino acid",
+      polar: "Hydrophilic non-charged amino acid",
+      positive: "Positively charged amino acid",
+      negative: "Negatively charged amino acid",
+      cysteine: "Cysteine",
+      stop: "Translation stop codon",
+    },
+    legend: {
+      aria: "Color legend",
+      hydrophobic: "Hydrophobic amino acids",
+      start: "Translation start codon",
+      polar: "Hydrophilic non-charged amino acids",
+      positive: "Positively charged amino acids",
+      negative: "Negatively charged amino acids",
+      cysteine: "Cysteine",
+      stop: "Translation stop codons",
     },
   },
 

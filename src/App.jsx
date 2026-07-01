@@ -5,6 +5,7 @@
 import { NavLink, Routes, Route, Navigate } from "react-router-dom";
 import TranslationWalkthrough from "./features/translation-walkthrough/TranslationWalkthrough";
 import MutationSimulator from "./features/mutation-simulator/MutationSimulator";
+import CodonChart from "./features/codon-chart/CodonChart";
 import { useTranslation } from "./i18n/i18nContext.js";
 import "./App.css";
 
@@ -34,6 +35,15 @@ export default function App() {
           <span className="tab-label-wide">{t("nav.mutationWide")}</span>
           <span className="tab-label-short">{t("nav.mutationShort")}</span>
         </NavLink>
+        <NavLink
+          to="/codons"
+          data-guide="codon-chart-tab"
+          className={({ isActive }) => `tab${isActive ? " tab-active" : ""}`}
+        >
+          <span className="tab-icon" aria-hidden="true">{t("nav.codonIcon")}</span>
+          <span className="tab-label-wide">{t("nav.codonWide")}</span>
+          <span className="tab-label-short">{t("nav.codonShort")}</span>
+        </NavLink>
         <a
           href="https://www.labolavs.com/category/education"
           className="tab tab-external"
@@ -58,6 +68,7 @@ export default function App() {
         <Route path="/" element={<Navigate to="/walkthrough" replace />} />
         <Route path="/walkthrough" element={<TranslationWalkthrough />} />
         <Route path="/mutation" element={<MutationSimulator />} />
+        <Route path="/codons" element={<CodonChart />} />
         <Route path="*" element={<Navigate to="/walkthrough" replace />} />
       </Routes>
     </div>
