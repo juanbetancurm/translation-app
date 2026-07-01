@@ -195,10 +195,9 @@ export const es = {
   codonChart: {
     hero: {
       pillLabel: "ARN",
-      pillText: "Referencia interactiva del codigo genetico",
+      pillText: "Codones Interactivos",
       title: "Tabla de codones de ARN",
       lead:
-        "Una matriz compacta de codones 4x4 organizada por el primer y segundo nucleotido. " +
         "Haz clic en un codon para ver el nombre completo del aminoacido y la informacion " +
         "relevante de inicio o parada.",
     },

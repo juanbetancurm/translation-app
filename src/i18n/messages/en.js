@@ -192,10 +192,9 @@ export const en = {
   codonChart: {
     hero: {
       pillLabel: "RNA",
-      pillText: "Interactive genetic code reference",
+      pillText: "Interactive codons",
       title: "RNA Codon Table",
       lead:
-        "A compact 4x4 codon matrix organized by first and second nucleotide. " +
         "Click a codon to see the complete amino acid name and relevant start " +
         "or stop information.",
     },
