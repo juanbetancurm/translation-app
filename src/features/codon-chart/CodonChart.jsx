@@ -76,9 +76,6 @@ export default function CodonChart() {
       <section className="codon-chart-layout">
         <div className="codon-chart-product-frame">
           <div className="codon-chart-window-bar" aria-hidden="true">
-            <span className="codon-chart-window-dot" />
-            <span className="codon-chart-window-dot" />
-            <span className="codon-chart-window-dot" />
             <span className="codon-chart-window-title">
               {t("codonChart.matrix.windowTitle")}
             </span>
